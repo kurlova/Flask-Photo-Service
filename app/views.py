@@ -1,10 +1,8 @@
 from app import app, db
-from app.models import User
+from app.forms import ProfileForm
+from app.models import User, Course
 from app.oauth import OAuthSignIn
-from flask import render_template
-from flask import redirect
-from flask import url_for
-from flask import flash
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask.ext.login import current_user, login_user, logout_user
 
 
@@ -13,6 +11,17 @@ from flask.ext.login import current_user, login_user, logout_user
 def index():
     word = 'Helloy'
     return render_template('index.html', word=word)
+
+@app.route('/search')
+def search():
+    courses = Course.query.all()
+    courses_strg = []
+    for el in range(len(courses)):
+        courses_strg.append({"id": courses[el].id,
+                            "name": courses[el].name,
+                            "description": courses[el].description,
+                            })
+    return jsonify({"data": courses_strg})
 
 
 @app.route('/logout')
@@ -45,5 +54,22 @@ def oauth_callback(provider):
         user = User(social_id=social_id, nickname=username, email=email)
         db.session.add(user)
         db.session.commit()
-    login_user(user, True)
-    return redirect(url_for('index'))
+        login_user(user, True)
+        return redirect(url_for('create_profile'))
+    else:
+        login_user(user, True)
+        return redirect(url_for('index'))
+
+@app.route('/create_profile', methods=['GET', 'POST'])
+def create_profile():
+        form = ProfileForm()
+        if request.method == 'POST' and form.validate_on_submit():
+            new_data = User.query.get(str(id))
+            new_data.email = form.email.data
+            db.session.commit()
+            return redirect('/index')
+        return render_template('create_profile.html', form=form)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
