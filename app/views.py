@@ -1,9 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from app import app, db
 from app.forms import ProfileForm
 from app.models import User, Course
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import json
 from flask.ext.login import current_user, login_user, logout_user
+from setuptools.compat import unicode
 
 
 @app.route('/')
@@ -12,16 +18,17 @@ def index():
     word = 'Helloy'
     return render_template('index.html', word=word)
 
+
 @app.route('/search')
 def search():
     courses = Course.query.all()
-    courses_strg = []
+    courses_storg = []
     for el in range(len(courses)):
-        courses_strg.append({"id": courses[el].id,
+        courses_storg.append({"id": courses[el].id,
                             "name": courses[el].name,
                             "description": courses[el].description,
                             })
-    return jsonify({"data": courses_strg})
+    return json.dumps({"data": courses_storg}, ensure_ascii=False)
 
 
 @app.route('/logout')
