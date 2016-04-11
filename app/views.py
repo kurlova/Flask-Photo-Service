@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 
+import flask
 from app import app, db
 from app.forms import ProfileForm
 from app.models import User, Course
 from app.oauth import OAuthSignIn
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request
 from flask import json
 from flask.ext.login import current_user, login_user, logout_user
-from setuptools.compat import unicode
 
 
 @app.route('/')
@@ -19,8 +19,8 @@ def index():
     return render_template('index.html', word=word)
 
 
-@app.route('/search')
-def search():
+@app.route('/courses')
+def view_courses():
     courses = Course.query.all()
     courses_storg = []
     for el in range(len(courses)):
@@ -28,7 +28,14 @@ def search():
                             "name": courses[el].name,
                             "description": courses[el].description,
                             })
-    return json.dumps({"data": courses_storg}, ensure_ascii=False)
+    result = json.dumps({"data": courses_storg}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8',)
+
+
+@app.route('/search')
+#def search():
+
+
 
 
 @app.route('/logout')
