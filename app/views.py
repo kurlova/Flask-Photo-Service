@@ -32,10 +32,21 @@ def view_courses():
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
-@app.route('/search')
-#def search():
-
-
+@app.route('/search', methods=['GET'])
+def test():
+    param = request.args.get('q')
+    l_param = param.lower()
+    db_content = Course.query.all()
+    indexes = []
+    for el in range(len(db_content)):
+        if l_param in db_content[el].name.lower():
+            indexes.append(el)
+    search_res = []
+    for el in indexes:
+        search_res.append({"name": db_content[el].name,
+                           "description": db_content[el].description})
+    result = json.dumps({"data": search_res}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
 @app.route('/logout')
