@@ -32,6 +32,7 @@ def view_courses():
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
+# for test search: localhost:5000/search?q=<some value>
 @app.route('/search', methods=['GET'])
 def test():
     param = request.args.get('q')
