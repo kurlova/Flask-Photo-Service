@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ZZOOMY - онлайн курсы по фотографии от ведущих специалистов</title>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-    <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+    <link rel=stylesheet type=text/css href="style.css">
+    <link rel=stylesheet href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
     <div class="row-fluid">
@@ -17,10 +17,11 @@
             <h2>Hi, {{ current_user.nickname }}!</h2>
             <p><a href="{{ url_for('logout') }}">Logout</a></p>
                 {% else %}
-            <p><a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="{{url_for('static', filename='icon/facebook.png')}}" width="40" height="40" alt="Facebook"></a></p>
-            <p><a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="{{url_for('static', filename='icon/vk.png')}}" width="40" height="40"></a></p>
-            <p><a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="{{url_for('static', filename='icon/google.png')}}" width="40" height="40"></a></p>
-            <p><a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="{{url_for('static', filename='icon/tweet.png')}}" width="40" height="40"></a></p>
+            <p><a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="icon/facebook.png" width="40" height="40" alt="Facebook"></a></p>
+            <p><a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="icon/vk.png" width="40" height="40"></a></p>
+            <p><a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="icon/google.png" width="40" height="40"></a></p>
+            <p><a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="icon/tweet.png" width="40" height="40"></a></p>
+            <p><img src="icon/course.jpg"></p>
                 {% endif %}
          </div>
     <h1>Онлайн-школа по фотографии</h1>
@@ -38,7 +39,7 @@
             {[title]}
         </div>
     </div>
-    <script src="{{url_for('static', filename='bower_components/angular/angular.js')}}"></script>
-    <script src="{{url_for('static', filename='js/app.js')}}"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
