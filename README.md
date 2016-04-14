@@ -24,3 +24,6 @@ This is a Flask project of service for photography schools. It's aim is to help 
 12. Устанавливаем AngularJS: bower install angular
 13. Устанавливаем Bootstrap: bower install bootstrap
 14. Возвращаемся в корневую директорию проекта и запускаем сервер: python run.py
+15. Открываем браузер и переходим на localhost:5000/index
+
+На выходе - главная страница с отображенными на ней курсами из базы данных, а также, работающий поиск.
