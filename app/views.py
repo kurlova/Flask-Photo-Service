@@ -27,6 +27,7 @@ def view_courses():
         courses_storg.append({"id": courses[el].id,
                             "name": courses[el].name,
                             "description": courses[el].description,
+                            "image": courses[el].img
                             })
     result = json.dumps({"data": courses_storg}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
@@ -34,7 +35,7 @@ def view_courses():
 
 # for test search: localhost:5000/search?q=<some value>
 @app.route('/search', methods=['GET'])
-def test():
+def search():
     param = request.args.get('q')
     l_param = param.lower()
     db_content = Course.query.all()
@@ -45,15 +46,28 @@ def test():
     search_res = []
     for el in indexes:
         search_res.append({"name": db_content[el].name,
-                           "description": db_content[el].description})
+                           "description": db_content[el].description,
+                           "image": db_content[el].img})
     result = json.dumps({"data": search_res}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_course():
+    length = len(Course.query.all())
+    test = {"id": length+1,
+                     "name": "Test course №" + str(length+1),
+                     "description": "This is a description for test course №" + str(length+1)}
+    s = json.dumps({"data": test}, ensure_ascii=False)
+    dict_convert = json.loads(s)
+    return flask.Response(response=dict_convert, content_type='application/json; charset=utf-8',)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 #When the user clicks the "Login in with ..." link to initiate an OAuth authentication
 # the following application route is invoked
