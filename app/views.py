@@ -4,7 +4,6 @@
 
 import flask
 from app import app, db
-from app.forms import ProfileForm
 from app.models import User, Course
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
