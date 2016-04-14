@@ -1,0 +1,7 @@
+Flask==0.10.1
+flask-sqlalchemy==2.1
+sqlalchemy-migrate
+flask-login==0.3.2
+rauth==0.7.2
+flask-oauth
+flask-restless
