@@ -53,13 +53,20 @@ def search():
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_course():
-    length = len(Course.query.all())
-    test = {"id": length+1,
-                     "name": "Test course №" + str(length+1),
-                     "description": "This is a description for test course №" + str(length+1)}
+    length = len(Course.query.all()) + 1
+    test = [{"id": length,
+                     "name": "Test course №" + str(length),
+                     "description": "This is a description for test course №" + str(length),
+                     "image": "icon/course.png"}]
     s = json.dumps({"data": test}, ensure_ascii=False)
     dict_convert = json.loads(s)
-    return flask.Response(response=dict_convert, content_type='application/json; charset=utf-8',)
+    name = dict_convert['data'][0]['name']
+    description = dict_convert['data'][0]['description']
+    img = dict_convert['data'][0]['image']
+    course = Course(name=name, description=description, img=img)
+    db.session.add(course)
+    db.session.commit()
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8',)
 
 
 @app.route('/logout')
