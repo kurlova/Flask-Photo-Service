@@ -18,7 +18,7 @@ This is a Flask project of service for photography schools. It's aim is to help 
 Клиентская часть
 
 8. Скачиваем и устанавливаем NodeJS по ссылке (если он еще не установлен): https://nodejs.org
-9. Чтобы убедиться в корректной установке, в командной строке прописываем node -v, затем npm -v
+9. Чтобы убедиться в корректной установке, в командной строке прописываем node -v, затем npm -v. Должны вывестись версии.
 10. Устанавливаем Bower (если он еще не установлен): npm install -g bower
 11. В командной строке заходим в папку app/static
 12. Устанавливаем AngularJS: bower install angular
