@@ -104,7 +104,9 @@ def oauth_callback(provider):
         return redirect(url_for('create_profile'))
     else:
         login_user(user, True)
-        return redirect(url_for('index'))
+        response = redirect(url_for('index'))
+        response.set_cookie('user_cookie', value=social_id)
+        return response
 
 @app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
