@@ -23,7 +23,9 @@ This is a Flask project of service for photography schools. It's aim is to help 
 11. В командной строке заходим в папку app/static
 12. Устанавливаем AngularJS: bower install angular
 13. Устанавливаем Bootstrap: bower install bootstrap
-14. Возвращаемся в корневую директорию проекта и запускаем сервер: python run.py
-15. Открываем браузер и переходим на localhost:5000/index
+14. Устанавливаем Angular-Route: bower install angular-route
+15. Переходим в папку angular-route, вырезаем оттуда файл angular-route.js, вставляем его в папку angular, и удаляем ненужную папку angular-route 
+16. Возвращаемся в командной строке в корневую директорию проекта и запускаем сервер: python run.py
+17. Открываем браузер и переходим на localhost:5000/index
 
 На выходе - главная страница с отображенными на ней курсами из базы данных, а также, работающий поиск.
