@@ -9,6 +9,7 @@ from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
 from flask.ext.login import current_user, login_user, logout_user
+from flask.json import jsonify
 
 
 @app.route('/')
@@ -53,20 +54,15 @@ def search():
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_course():
-    length = len(Course.query.all()) + 1
-    test = [{"id": length,
-                     "name": "Test course №" + str(length),
-                     "description": "This is a description for test course №" + str(length),
-                     "image": "icon/course.png"}]
-    s = json.dumps({"data": test}, ensure_ascii=False)
-    dict_convert = json.loads(s)
-    name = dict_convert['data'][0]['name']
-    description = dict_convert['data'][0]['description']
-    img = dict_convert['data'][0]['image']
+    new_course = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
+    convert = json.loads(new_course)
+    name = convert["data"]["name"]
+    description = convert["data"]["description"]
+    img = convert["data"]["image"]
     course = Course(name=name, description=description, img=img)
     db.session.add(course)
     db.session.commit()
-    return flask.Response(response='ok', content_type='application/json; charset=utf-8',)
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
 @app.route('/logout')
