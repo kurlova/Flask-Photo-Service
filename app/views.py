@@ -65,10 +65,18 @@ def create_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+def create_profile():
+    return render_template('../static/partials/profile_form')
+
+
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    response = redirect(url_for('index'))
+    response.set_cookie('user_id', '', expires=0)
+    response.set_cookie('redirect', '', expires=0)
+    return response
 
 
 #When the user clicks the "Login in with ..." link to initiate an OAuth authentication
@@ -97,22 +105,19 @@ def oauth_callback(provider):
         db.session.add(user)
         db.session.commit()
         login_user(user, True)
-        return redirect(url_for('create_profile'))
+        id = User.query.filter_by(social_id=social_id).first().id
+        response = redirect(url_for('index'))
+        response.set_cookie('user_id', value=bytes([id]))
+        response.set_cookie('redirect', value='create_profile')
+        return response
     else:
         login_user(user, True)
+        id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
-        response.set_cookie('user_cookie', value=social_id)
+        response.set_cookie('user_id', value=bytes([id]))
+        #здесь наверное может быть запись в куки страницы перехода на профиль пользователя
         return response
 
-@app.route('/create_profile', methods=['GET', 'POST'])
-def create_profile():
-        form = ProfileForm()
-        if request.method == 'POST' and form.validate_on_submit():
-            new_data = User.query.get(str(id))
-            new_data.email = form.email.data
-            db.session.commit()
-            return redirect('/index')
-        return render_template('create_profile.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
