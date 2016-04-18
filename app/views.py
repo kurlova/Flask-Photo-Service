@@ -79,6 +79,8 @@ def logout():
     return response
 
 
+#When the user clicks the "Login in with ..." link to initiate an OAuth authentication
+# the following application route is invoked
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous:
