@@ -115,7 +115,6 @@ def oauth_callback(provider):
         id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
         response.set_cookie('user_id', value=bytes([id]))
-        #здесь наверное может быть запись в куки страницы перехода на профиль пользователя
         return response
 
 
