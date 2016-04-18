@@ -1,7 +1,8 @@
 'use strict';
 
 
-var app = angular.module('glavApp', ['ngRoute']);
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies']);
+
 
 app.config(['$routeProvider', function($routeProvide){
     $routeProvide
@@ -10,7 +11,7 @@ app.config(['$routeProvider', function($routeProvide){
             controller: 'CoursesCtrl'
     })
         .when('/about',{
-          templateUrl:'partials/about.html',
+          templateUrl:'partials/profile_form.html',
           controller:'AboutCtrl'
         })
         .when('/contact',{
@@ -21,7 +22,7 @@ app.config(['$routeProvider', function($routeProvide){
             templateUrl:'partials/search.html',
             controller:'SearchCtrl'
         })
-        .when('/courses/:courseid',{
+        .when('/courses/:id',{
             templateUrl: 'partials/courses-detail.html',
             controller: 'CourseDetailCtrl'
     })
@@ -50,7 +51,7 @@ app.config(['$interpolateProvider', function($interpolateProvider) {
 /* About Controller */
 phonecatApp.controller('AboutCtrl',[
   '$scope','$http', '$location',
-  function($scope, $http, $location) {
+  function($scope) {
 
   }
 ]);
@@ -72,4 +73,5 @@ app.controller('SearchCtrl', function($scope, $http, $location){
     $http.get('/courses').success(function(data){
             $scope.courses=data;
         })   
-})
+});
+
