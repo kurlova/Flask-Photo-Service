@@ -65,9 +65,14 @@ def create_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/create_profile', methods=['GET'])
 def create_profile():
-    return render_template('../static/partials/profile_form')
+    user_data = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
+    convert = json.loads(user_data)
+    email = convert["user_data"]["email"]
+    username = convert["user_data"]["username"]
+    country = convert["user_data"]["country"]
+    city = convert["user_data"]["city"]
 
 
 @app.route('/logout')
@@ -116,6 +121,14 @@ def oauth_callback(provider):
         response = redirect(url_for('index'))
         response.set_cookie('user_id', value=bytes([id]))
         return response
+        # user_data = User.query.filter_by(social_id=social_id).first()
+        # id = user_data.id
+        # username = user_data.nickname
+        # email = user_data.email
+        # user_data_dict = {"id": id, "username": username, "email": email}
+        # user_data_json = json.dumps({"data": user_data_dict}, ensure_ascii=False)
+        # return flask.Response(response=user_data_json, content_type='application/json; charset=utf-8')
+
 
 
 @app.errorhandler(404)

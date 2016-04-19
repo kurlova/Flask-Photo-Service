@@ -6,9 +6,9 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
     <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 </head>
-<body ng-controller="CoursesCtrl">
+<body >
         <nav class="navbar navbar-fixed-top navbar-inverse">
-          <div class="container">
+          <div class="container" ng-controller="CoursesCtrl">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -51,8 +51,12 @@
           </footer>
     
     </div>
+        <div ng-controller="CookieCtrl">
+            {[vivod]}
+        </div>
     <script src="{{url_for('static', filename='bower_components/angular/angular.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-route.js')}}"></script>
+    <script src="{{url_for('static', filename='bower_components/angular/angular-cookies.js')}}"></script>
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
 </body>
 </html>

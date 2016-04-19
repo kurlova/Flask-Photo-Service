@@ -1,7 +1,7 @@
 'use strict';
 
 
-var app = angular.module('glavApp', ['ngRoute']);
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies']);
 
 app.config(['$routeProvider', function($routeProvide){
     $routeProvide
@@ -28,6 +28,11 @@ app.config(['$routeProvider', function($routeProvide){
         .otherwise({
             redirectTo:'/'
     });
+}]);
+
+app.controller('CookieCtrl', ['$cookies', '$scope', function($cookies, $scope) {
+  var myCookie = $cookies.get('user_id');
+    $scope.vivod = myCookie
 }]);
 
 app.controller('CoursesCtrl', function($scope, $http, $location){
