@@ -9,7 +9,6 @@ from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
 from flask.ext.login import current_user, login_user, logout_user
-from flask.json import jsonify
 
 
 @app.route('/')
@@ -52,7 +51,7 @@ def search():
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create_course', methods=['GET', 'POST'])
 def create_course():
     new_course = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
     convert = json.loads(new_course)
@@ -65,14 +64,18 @@ def create_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
-@app.route('/create_profile', methods=['GET'])
+@app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
-    user_data = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
-    convert = json.loads(user_data)
+    new_user = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
+    convert = json.loads(new_user)
     email = convert["user_data"]["email"]
     username = convert["user_data"]["username"]
     country = convert["user_data"]["country"]
     city = convert["user_data"]["city"]
+    user = User(email=email, nickname=username, country=country, city=city)
+    db.session.add(user)
+    db.session.commit()
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
 @app.route('/logout')
@@ -121,13 +124,6 @@ def oauth_callback(provider):
         response = redirect(url_for('index'))
         response.set_cookie('user_id', value=bytes([id]))
         return response
-        # user_data = User.query.filter_by(social_id=social_id).first()
-        # id = user_data.id
-        # username = user_data.nickname
-        # email = user_data.email
-        # user_data_dict = {"id": id, "username": username, "email": email}
-        # user_data_json = json.dumps({"data": user_data_dict}, ensure_ascii=False)
-        # return flask.Response(response=user_data_json, content_type='application/json; charset=utf-8')
 
 
 

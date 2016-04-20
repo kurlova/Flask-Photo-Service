@@ -35,21 +35,21 @@
                 <a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="{{url_for('static', filename='icon/google.png')}}" width="40" height="40"></a>
                 <a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="{{url_for('static', filename='icon/tweet.png')}}" width="40" height="40"></a>
                     {% endif %}
-          </div><!-- /.nav-collapse -->     
-              
+          </div><!-- /.nav-collapse -->
+
           </div><!-- /.container -->
         </nav><!-- /.navbar -->
 
-    
+
     <div class="container">
-    
-        <ng-view></ng-view> 
+
+        <ng-view></ng-view>
         <hr>
 
           <footer>
             <p>&copy; ZZOOMY </p>
           </footer>
-    
+
     </div>
         <div ng-controller="CookieCtrl">
             {[vivod]}
