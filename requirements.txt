@@ -5,3 +5,4 @@ flask-login==0.3.2
 rauth==0.7.2
 flask-oauth
 flask-restless
+gunicorn

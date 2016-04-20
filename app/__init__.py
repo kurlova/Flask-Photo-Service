@@ -3,6 +3,7 @@ from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 
+
 app = Flask(__name__, static_url_path='')
 app.config.from_object('config')
 db = SQLAlchemy(app)

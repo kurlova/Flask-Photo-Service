@@ -1,3 +1,4 @@
+from flask import json
 from flask.ext.login import UserMixin
 from app import db, lm
 
@@ -15,6 +16,11 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User number %r>' % self.id
 
+    def to_json(self):
+        return json.loads(json.dumps({"id": self.id,
+                                      "nickname": self.nickname,
+                                      "email" : self.email,
+                                      "city" : self.city if self.city else ""}, ensure_ascii=False))
 
 @lm.user_loader
 def load_user(id):
