@@ -6,10 +6,8 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
     <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 </head>
-    
-    
+      
 <body>
-    
         <nav class="navbar navbar-fixed-top navbar-inverse">
           <div class="container">
             <div class="navbar-header">
@@ -30,7 +28,7 @@
                 <p><b>Error</b>: {{ message }}</p>
                     {% endfor %}
                     {% if current_user.is_authenticated %}
-                <h2>Hi, {{ current_user.nickname }}!</h2>
+                <h2>Hi, {{ current_user.nickname}}!</h2>
                 <p><a href="{{ url_for('logout') }}">Logout</a></p>
                     {% else %}
                 <a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="{{url_for('static', filename='icon/facebook.png')}}" width="40" height="40" alt="Facebook"></a>
@@ -44,8 +42,7 @@
         </nav><!-- /.navbar -->
 
 
-    <div class="CoursesCtrl">
-        
+    <div class="CoursesCtrl"> 
     
         <ng-view></ng-view> 
         <hr>
@@ -56,17 +53,16 @@
     
     </div>
     
-    <div  ng-controller="CookCtrl" >
+    <div>
         {[vivod]}
     </div>
-    
-    
+       
     <script src="{{url_for('static', filename='bower_components/angular/angular.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-route.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-cookies.js')}}"></script>
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
     <script>
-        //window.application.run({{current_user.to_json()}})
+        window.application.run({user : {% if current_user.is_authenticated %} {{current_user.to_json()|safe }} {%else%} false {% endif %}})
     </script>
 </body>
 </html>

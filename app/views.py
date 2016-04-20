@@ -118,7 +118,7 @@ def oauth_callback(provider):
     else:
         login_user(user, True)
         return redirect(url_for('index'))
-        id = User.query.filter_by(social_id=social_id).first().id
+        #id = User.query.filter_by(social_id=social_id).first().id
         #response = redirect(url_for('index'))
         #response.set_cookie('user_id', value=bytes([id]))
         #return response

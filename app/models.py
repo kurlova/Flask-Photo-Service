@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     city = db.Column(db.String(64), nullable=True)
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.name'), nullable=True)
     def to_json(self):
-        return json.loads(json.dumps({"id": self.id}, ensure_ascii=False))
+        return json.loads(json.dumps({"id": self.id, "nickname": self.nickname, "email" : self.email, "city" : self.city if self.city else ""}, ensure_ascii=False)) 
     def __repr__(self):
         return '<User number %r>' % self.id
 
