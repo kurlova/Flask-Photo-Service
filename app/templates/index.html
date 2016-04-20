@@ -6,7 +6,10 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
     <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 </head>
-<body ng-controller="CoursesCtrl">
+    
+    
+<body>
+    
         <nav class="navbar navbar-fixed-top navbar-inverse">
           <div class="container">
             <div class="navbar-header">
@@ -17,10 +20,10 @@
                 <span class="icon-bar"></span>
               </button>
             </div>
-            <div id="navbar" class="collapse navbar-collapse">
+            <div id="navbar" class="collapse navbar-collapse" >
               <ul class="nav navbar-nav">
                 <li class="active"><a href="#/">Home</a></li>
-                <li><a href="#/about">About</a></li>
+                <li><a href="#/about">form</a></li>
                 <li><a href="#/contact">Contact</a></li>
               </ul>
                 {% for message in get_flashed_messages() %}
@@ -40,8 +43,9 @@
           </div><!-- /.container -->
         </nav><!-- /.navbar -->
 
-    
-    <div class="container">
+
+    <div class="CoursesCtrl">
+        
     
         <ng-view></ng-view> 
         <hr>
@@ -51,8 +55,18 @@
           </footer>
     
     </div>
+    
+    <div  ng-controller="CookCtrl" >
+        {[vivod]}
+    </div>
+    
+    
     <script src="{{url_for('static', filename='bower_components/angular/angular.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-route.js')}}"></script>
+    <script src="{{url_for('static', filename='bower_components/angular/angular-cookies.js')}}"></script>
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
+    <script>
+        //window.application.run({{current_user.to_json()}})
+    </script>
 </body>
 </html>

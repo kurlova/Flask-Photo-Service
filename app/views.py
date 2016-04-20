@@ -4,12 +4,12 @@
 
 import flask
 from app import app, db
-from app.forms import ProfileForm
 from app.models import User, Course
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
 from flask.ext.login import current_user, login_user, logout_user
+from flask.json import jsonify
 
 
 @app.route('/')
@@ -27,21 +27,62 @@ def view_courses():
         courses_storg.append({"id": courses[el].id,
                             "name": courses[el].name,
                             "description": courses[el].description,
+                            "image": courses[el].img
                             })
     result = json.dumps({"data": courses_storg}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
-@app.route('/search')
-#def search():
+# for test search: localhost:5000/search?q=<some value>
+@app.route('/search', methods=['GET'])
+def search():
+    param = request.args.get('q')
+    l_param = param.lower()
+    db_content = Course.query.all()
+    indexes = []
+    for el in range(len(db_content)):
+        if l_param in db_content[el].name.lower():
+            indexes.append(el)
+    search_res = []
+    for el in indexes:
+        search_res.append({"name": db_content[el].name,
+                           "description": db_content[el].description,
+                           "image": db_content[el].img})
+    result = json.dumps({"data": search_res}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
+@app.route('/create', methods=['GET', 'POST'])
+def create_course():
+    new_course = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
+    convert = json.loads(new_course)
+    name = convert["data"]["name"]
+    description = convert["data"]["description"]
+    img = convert["data"]["image"]
+    course = Course(name=name, description=description, img=img)
+    db.session.add(course)
+    db.session.commit()
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
+
+
+@app.route('/create_profile', methods=['GET'])
+def create_profile():
+    user_data = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
+    convert = json.loads(user_data)
+    email = convert["user_data"]["email"]
+    username = convert["user_data"]["username"]
+    country = convert["user_data"]["country"]
+    city = convert["user_data"]["city"]
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    response = redirect(url_for('index'))
+    response.set_cookie('user_id', '', expires=0)
+    response.set_cookie('redirect', '', expires=0)
+    return response
+
 
 #When the user clicks the "Login in with ..." link to initiate an OAuth authentication
 # the following application route is invoked
@@ -69,20 +110,27 @@ def oauth_callback(provider):
         db.session.add(user)
         db.session.commit()
         login_user(user, True)
-        return redirect(url_for('create_profile'))
+        id = User.query.filter_by(social_id=social_id).first().id
+        response = redirect(url_for('index'))
+        response.set_cookie('user_id', value=bytes([id]))
+        response.set_cookie('redirect', value='create_profile')
+        return response
     else:
         login_user(user, True)
         return redirect(url_for('index'))
+        id = User.query.filter_by(social_id=social_id).first().id
+        #response = redirect(url_for('index'))
+        #response.set_cookie('user_id', value=bytes([id]))
+        #return response
+    
+        #user_data = User.query.filter_by(social_id=social_id).first()
+        #id = user_data.id
+        #username = user_data.nickname
+        # email = user_data.email
+        #user_data_dict = {"id": id, "username": username, "email": email}
+        #user_data_json = json.dumps({"data": user_data_dict}, ensure_ascii=False)
+        #return flask.Response(response=user_data_json, content_type='application/json; charset=utf-8')
 
-@app.route('/create_profile', methods=['GET', 'POST'])
-def create_profile():
-        form = ProfileForm()
-        if request.method == 'POST' and form.validate_on_submit():
-            new_data = User.query.get(str(id))
-            new_data.email = form.email.data
-            db.session.commit()
-            return redirect('/index')
-        return render_template('create_profile.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
