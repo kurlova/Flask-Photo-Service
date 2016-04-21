@@ -68,12 +68,16 @@ def create_course():
 def create_profile():
     new_user = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
     convert = json.loads(new_user)
+    id = convert["user_data"]["id"]
     email = convert["user_data"]["email"]
     username = convert["user_data"]["username"]
     country = convert["user_data"]["country"]
     city = convert["user_data"]["city"]
-    user = User(email=email, nickname=username, country=country, city=city)
-    db.session.add(user)
+    user = User.query.filter_by(id=id).first()
+    user.nickname = username
+    user.email = email
+    user.country = country
+    user.city = city
     db.session.commit()
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
