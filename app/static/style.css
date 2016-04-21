@@ -1,0 +1,34 @@
+body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+.shapka{
+    width: 100%;
+    height: 20%;
+    background:url(icon/foto.jpg)repeat-y 50% 50%;
+    
+}
+h1{
+    text-align: center;
+    color:white;
+    padding: 40px;
+}
+.loginer{
+    width: 30%;
+    height: 20%;
+
+}
+.form-search{
+    margin-left: 40%;
+}
+.popular_curs{
+    width: 100%; /* Ширина блока */
+    height:60%;
+    text-align: center;
+    background: gray;    
+    
+}
+.info{
+    
+}
