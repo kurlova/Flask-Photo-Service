@@ -20,7 +20,7 @@ OAUTH_CREDENTIALS = {
     },
     'google': {
             'id': '486274894648-aapkse42usip95n5c3uvp9enockq1fh2.apps.googleusercontent.com',
-            'secret': 'FjjuderQH7ijP21g0bmK8yh0'
+            'secret': '5bQ4cWS-36QT5fCEFe-1hPt8'
     },
     'twitter': {
         'id': '6a5SurCSNVyT2XdbE8I9MaAmm',
