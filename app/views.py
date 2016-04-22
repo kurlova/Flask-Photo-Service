@@ -93,7 +93,7 @@ def logout():
 
 #When the user clicks the "Login in with ..." link to initiate an OAuth authentication
 # the following application route is invoked
-@app.route('/authorize/<provider>')
+@app.route('https://zzoomy.herokuapp.com/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous:
         return redirect(url_for('index'))
@@ -101,7 +101,7 @@ def oauth_authorize(provider):
     return oauth.authorize()
 
 
-@app.route('/callback/<provider>')
+@app.route('https://zzoomy.herokuapp.com/callback/<provider>')
 def oauth_callback(provider):
     if not current_user.is_anonymous:
         return redirect(url_for('index'))
