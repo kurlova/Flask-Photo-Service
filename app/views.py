@@ -58,8 +58,23 @@ def create_course():
     name = convert["data"]["name"]
     description = convert["data"]["description"]
     img = convert["data"]["image"]
-    course = Course(name=name, description=description, img=img)
+    creator_id = convert["data"]["creator_id"]
+    course = Course(name=name, description=description, img=img, creator_id=creator_id)
     db.session.add(course)
+    db.session.commit()
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
+
+
+# CHECK ITS WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.route('/subsribe')
+def subscribe_course():
+    user_to_course = json.dumps({"data": request.json.get("data")})
+    convert = json.loads(user_to_course)
+    user_id = convert["data"]["user_id"]
+    course_id = convert["data"]["course_id"]
+    user = User.query.filter_by(id=user_id).first()
+    course = Course.query.filter_by(id=course_id).first()
+    user.courses_subscr.append(course.id)
     db.session.commit()
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
