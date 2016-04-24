@@ -18,6 +18,7 @@ def index():
     return render_template('index.html', word=word)
 
 
+# Все курсы из базы данных
 @app.route('/courses')
 def view_courses():
     courses = Course.query.all()
@@ -51,6 +52,7 @@ def search():
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
 
+# Создание курса
 @app.route('/create_course', methods=['GET', 'POST'])
 def create_course():
     new_course = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
@@ -65,6 +67,7 @@ def create_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+# Подписка на курс
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe_course():
     subscription = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
@@ -79,6 +82,7 @@ def subscribe_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+# Список курсов на которые подписан пользователь
 @app.route('/subscriptions', methods=['GET', 'POST'])
 def view_profile():
     user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
@@ -92,6 +96,7 @@ def view_profile():
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 
+# Создание профиля для нового пользователя
 @app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
     new_user = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
