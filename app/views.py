@@ -67,6 +67,20 @@ def create_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+# Список курсов которые пользователь создал
+@app.route('/created', methods=['POST', 'GET'])
+def created_courses():
+    user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
+    convert = json.loads(user)
+    user_id = convert["data"]["user_id"]
+    courses = User.query.filter_by(id=user_id).first().courses_owned.all()
+    owned = []
+    for el in range(len(courses)):
+        owned.append({"course_id": courses[el].id})
+    result = json.dumps({"data": owned}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8')
+
+
 # Подписка на курс
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe_course():
@@ -95,6 +109,24 @@ def view_profile():
     result = json.dumps({"data": subscriptions}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
+
+# Удаление курса
+@app.route('/delete_course', methods=['GET', 'POST'])
+def delete_course():
+    deletion_data = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
+    convert = json.loads(deletion_data)
+    user_id = convert["data"]["user_id"]
+    course_id = convert["data"]["course_id"]
+    owned = User.query.filter_by(id=user_id).first().courses_owned.all()
+    result = '401'
+    for el in range(len(owned)):
+        if owned[el].id == int(course_id):
+            course = Course.query.filter_by(id=course_id).first()
+            db.session.delete(course)
+            db.session.commit()
+            result = 'ok'
+            break
+    return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 # Создание профиля для нового пользователя
 @app.route('/create_profile', methods=['GET', 'POST'])
