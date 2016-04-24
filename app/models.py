@@ -4,8 +4,8 @@ from app import db, lm
 
 
 users_courses_relationship = db.Table('users_courses_relationship',
-                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                                      db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
+                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id'), nullable=False),
+                                      db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), nullable=False),
                                       db.PrimaryKeyConstraint('user_id', 'course_id')
                                       )
 
@@ -29,7 +29,8 @@ class User(UserMixin, db.Model):
     city = db.Column(db.String(64), nullable=True)
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True)
     courses_owned = db.relationship('Course', backref='creator', lazy='dynamic')
-    courses_subscr = db.relationship('Course', secondary=users_courses_relationship, backref='users')
+    courses_subscr = db.relationship('Course', secondary=users_courses_relationship,
+                                     backref='users')
 
 
     def __repr__(self):
@@ -53,7 +54,7 @@ class Course(db.Model):
     description = db.Column(db.String(500), nullable=False)
     img = db.Column(db.String(128), nullable=True)
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.name'))
-    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 class Organization(db.Model):

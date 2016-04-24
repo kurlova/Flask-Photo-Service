@@ -4,7 +4,7 @@
 
 import flask
 from app import app, db
-from app.models import User, Course
+from app.models import User, Course, users_courses_relationship
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
@@ -79,6 +79,19 @@ def subscribe_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+@app.route('/subscriptions', methods=['GET', 'POST'])
+def view_profile():
+    user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
+    convert = json.loads(user)
+    user_id = convert["data"]["user_id"]
+    courses = User.query.filter_by(id=user_id).first().courses_subscr
+    subscriptions = []
+    for el in range(len(courses)):
+        subscriptions.append({"course_id": courses[el].id})
+    result = json.dumps({"data": subscriptions}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8')
+
+
 @app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
     new_user = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
@@ -143,7 +156,6 @@ def oauth_callback(provider):
         response = redirect(url_for('index'))
         # response.set_cookie('user_id', value=bytes([id]))
         return response
-
 
 
 @app.errorhandler(404)
