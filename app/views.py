@@ -76,7 +76,9 @@ def created_courses():
     courses = User.query.filter_by(id=user_id).first().courses_owned.all()
     owned = []
     for el in range(len(courses)):
-        owned.append({"course_id": courses[el].id})
+        owned.append({"name": courses[el].name,
+                      "description": courses[el].description,
+                      "image": courses[el].img})
     result = json.dumps({"data": owned}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
@@ -105,7 +107,9 @@ def view_profile():
     courses = User.query.filter_by(id=user_id).first().courses_subscr
     subscriptions = []
     for el in range(len(courses)):
-        subscriptions.append({"course_id": courses[el].id})
+        subscriptions.append({"name": courses[el].name,
+                              "description": courses[el].description,
+                              "img": courses[el].img})
     result = json.dumps({"data": subscriptions}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
@@ -131,13 +135,13 @@ def delete_course():
 # Создание профиля для нового пользователя
 @app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
-    new_user = json.dumps({"user_data": request.json.get("user_data")}, ensure_ascii=False)
+    new_user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
     convert = json.loads(new_user)
-    id = convert["user_data"]["id"]
-    email = convert["user_data"]["email"]
-    username = convert["user_data"]["username"]
-    country = convert["user_data"]["country"]
-    city = convert["user_data"]["city"]
+    id = convert["data"]["id"]
+    email = convert["data"]["email"]
+    username = convert["data"]["username"]
+    country = convert["data"]["country"]
+    city = convert["data"]["city"]
     user = User.query.filter_by(id=id).first()
     user.nickname = username
     user.email = email
