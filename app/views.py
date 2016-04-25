@@ -4,7 +4,7 @@
 
 import flask
 from app import app, db
-from app.models import User, Course, users_courses_relationship
+from app.models import User, Course, users_courses_relationship, Camera
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
@@ -49,7 +49,7 @@ def search():
                            "description": db_content[el].description,
                            "image": db_content[el].img})
     result = json.dumps({"data": search_res}, ensure_ascii=False)
-    return flask.Response(response=result, content_type='application/json; charset=utf-8',)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 
 # Создание курса
@@ -142,13 +142,28 @@ def create_profile():
     username = convert["data"]["username"]
     country = convert["data"]["country"]
     city = convert["data"]["city"]
+    # camera = convert["data"]["camera"]
+    cams_nest = convert["data"]["cameras"]
+    cams = []
+    for cam in range(len(cams_nest)):
+        cams.append(cams_nest[cam]["name"])
     user = User.query.filter_by(id=id).first()
     user.nickname = username
     user.email = email
     user.country = country
     user.city = city
+    # db.session.commit()
+    # user.cameras = camera
+    for cam in range(len(cams)):
+        camera = Camera.query.filter_by(model=cams[cam]).first()
+        user.cameras.append(camera)
+    # c1 = Camera.query.filter_by(model=str(cams[0])).first()
+    # print(c1)
     db.session.commit()
-    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
+    return flask.Response(response='jk', content_type='application/json; charset=utf-8')
+
+
+
 
 
 @app.route('/logout')
