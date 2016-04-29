@@ -10,13 +10,27 @@ users_courses_relationship = db.Table('users_courses_relationship',
                                       )
 
 
+users_cameras_relationship = db.Table('users_cameras_relationship',
+                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id'), nullable=False),
+                                      db.Column('camera_id', db.Integer, db.ForeignKey('cameras.id'), nullable=False),
+                                      db.PrimaryKeyConstraint('user_id', 'camera_id')
+                                      )
+
+
 class UsersCoursesRelationship():
     def __init__(self, user_id, course_id):
         self.user_id = user_id
         self.course_id = course_id
 
-
 db.mapper(UsersCoursesRelationship, users_courses_relationship)
+
+
+class UsersCamerasRelationship():
+    def __init__(self, user_id, camera_id):
+        self.user_id = user_id
+        self.camera_id = camera_id
+
+db.mapper(UsersCamerasRelationship, users_cameras_relationship)
 
 
 class User(UserMixin, db.Model):
@@ -24,6 +38,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     social_id = db.Column(db.String(64), nullable=False) #ids for oAuth
     nickname = db.Column(db.String(64), nullable=False)
+    img = db.Column(db.String(128), nullable=True)
     email = db.Column(db.String(64), nullable=True)
     country = db.Column(db.String(64), nullable=True)
     city = db.Column(db.String(64), nullable=True)
@@ -31,6 +46,7 @@ class User(UserMixin, db.Model):
     courses_owned = db.relationship('Course', backref='creator', lazy='dynamic')
     courses_subscr = db.relationship('Course', secondary=users_courses_relationship,
                                      backref='users')
+    cameras = db.relationship('Camera', secondary=users_cameras_relationship, backref='users')
 
 
     def __repr__(self):
@@ -75,6 +91,9 @@ class OrganizationType(db.Model):
     type = db.Column(db.String(30))
 
 
-
+class Camera(db.Model):
+    __tablename__ = 'cameras'
+    id = db.Column(db.Integer, primary_key=True)
+    model = db.Column(db.String(30), nullable=False)
 
 
