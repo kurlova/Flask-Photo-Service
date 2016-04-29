@@ -133,7 +133,7 @@ def delete_course():
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 # Создание профиля для нового пользователя
-@app.route('/create_profile', methods=['GET', 'POST'])
+'''@app.route('/create_profile', methods=['GET', 'POST'])
 def create_profile():
     new_user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
     convert = json.loads(new_user)
@@ -160,10 +160,16 @@ def create_profile():
     # c1 = Camera.query.filter_by(model=str(cams[0])).first()
     # print(c1)
     db.session.commit()
-    return flask.Response(response='jk', content_type='application/json; charset=utf-8')
+    return flask.Response(response='jk', content_type='application/json; charset=utf-8')'''
 
 
-
+@app.route('/create_profile', methods=['GET', 'POST'])
+def create_profile():
+    new_user = request.get_json()
+    print(new_user)
+    username = new_user["data"]["username"]
+    print(username)
+    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
 @app.route('/logout')
@@ -208,9 +214,9 @@ def oauth_callback(provider):
         return response
     else:
         login_user(user, True)
-        # id = User.query.filter_by(social_id=social_id).first().id
+        id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
-        # response.set_cookie('user_id', value=bytes([id]))
+        response.set_cookie('user_id', value=bytes([id]))
         return response
 
 

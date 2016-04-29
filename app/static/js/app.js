@@ -2,6 +2,8 @@
 
 var app = angular.module('glavApp', ['ngRoute', 'ngCookies']); 
 
+
+
 var myapp = function() {}
 
 myapp.prototype.checkUserFields = function(user) {
@@ -49,29 +51,42 @@ myapp.prototype.run  = function(data) {
                             return data.user; // or primitive, or promise or something else
                         }
                     } 
-            })
+            });
             
         }]);
-        }
+        };
  
-        app.controller('CookCtrl', ['$cookies', '$scope', function($cookies, $scope){
+        app.controller('CookieCtrl', ['$cookies', '$scope', function($cookies, $scope){
 
             var myCookie = $cookies.get('user_id');
             $scope.vivod=myCookie;    
 
         }]);
     
-        app.controller('FormController', function(user){
-            console.log(user); 
-            
-        });
-
+        app.controller('FormController', ['$scope', '$http', function($scope, $http){
+            $scope.formInfo = {};
+            $scope.saveData = function() {
+                console.log($scope.formInfo);
+                $http({
+                    method: "POST",
+                    url: '/create_profile',
+                    headers: {'Content-Type': 'application/json' },
+                    data: {"data": $scope.formInfo}
+                }).success(function(data){
+                    console.log(data);
+                    console.log(headers)
+                });
+                //$http.post('/create_profile/', data).success(function(data){
+                    //что-то делаем с полученными в ответ данными.обработка ответа сервера
+                //})
+                
+};
+            console.log(data)
+}]);
 
         app.controller('CoursesCtrl', function($scope, $http, $location){
 
-
             console.log($scope);
-
             console.log('$location.url() - ', $location.url());
             console.log('$location.path() - ', $location.path());
             console.log('$location.search() - ', $location.search());
