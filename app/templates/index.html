@@ -32,9 +32,9 @@
                 <p><a href="{{ url_for('logout') }}">Logout</a></p>
                     {% else %}
                 <a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/facebook.png" width="40" height="40" alt="Facebook"></a>
-                <a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/vkontakte.png" width="40" height="40"></a>
-                <a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/google_plus.png" width="40" height="40"></a>
-                <a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/twitter.png" width="40" height="40"></a>
+                <a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/vkontakte.png" width="40" height="40" alt="Vkontakte"></a>
+                <a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/google_plus.png" width="40" height="40" alt="Google"></a>
+                <a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/twitter.png" width="40" height="40" alt="Twitter"></a>
                     {% endif %}
           </div><!-- /.nav-collapse -->
               
@@ -42,7 +42,7 @@
         </nav><!-- /.navbar -->
 
 
-    <div class="CoursesCtrl"> 
+
     
         <ng-view></ng-view> 
         <hr>
@@ -50,8 +50,6 @@
           <footer>
             <p>&copy; ZZOOMY </p>
           </footer>
-    
-    </div>
     
     <div ng-controller="CookieCtrl">
         {[vivod]}

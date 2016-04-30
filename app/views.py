@@ -9,6 +9,7 @@ from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
 from flask.ext.login import current_user, login_user, logout_user
+from flask.json import jsonify
 
 
 @app.route('/')
@@ -49,7 +50,8 @@ def search():
                            "description": db_content[el].description,
                            "image": db_content[el].img})
     result = json.dumps({"data": search_res}, ensure_ascii=False)
-    return flask.Response(response=result, content_type='application/json; charset=utf-8')
+    print(result)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
 
 
 # Создание курса
@@ -167,8 +169,27 @@ def create_profile():
 def create_profile():
     new_user = request.get_json()
     print(new_user)
+    id = new_user["data"]["id"]
+    print(id)
+    # id = 2
     username = new_user["data"]["username"]
-    print(username)
+    email = new_user["data"]["email"]
+    city = new_user["data"]["city"]
+    country = new_user["data"]["country"]
+    # cams_nest = new_user["data"]["cameras"]
+    # cams = []
+    # for cam in range(len(cams_nest)):
+    #     cams.append(cams_nest[cam]["name"])
+    user = User.query.filter_by(id=id).first()
+    user.nickname = username
+    user.email = email
+    user.country = country
+    user.city = city
+    # user.cameras = cams_nest
+    # for cam in range(len(cams)):
+    #     camera = Camera.query.filter_by(model=cams[cam]).first()
+    #     user.cameras.append(camera)
+    db.session.commit()
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
@@ -216,10 +237,18 @@ def oauth_callback(provider):
         login_user(user, True)
         id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
-        response.set_cookie('user_id', value=bytes([id]))
+        response.set_cookie('user_id', value=bytes(str(id), 'utf-8'))
         return response
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,HEAD,POST')
+    return response

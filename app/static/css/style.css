@@ -22,7 +22,7 @@ h2, h1{
 }
 
 #profileform{
-    background: greenyellow;
+    background: white;
     padding-left: 200px;
     padding-top: 50px;
 
@@ -35,6 +35,13 @@ h2, h1{
     height: 350px;
     padding: 5px;
 }
+
+#courses_search{
+    border: 1px solid gray;
+    height: 150px;
+    padding: 5px;
+}
+
 #img{
 
 }
