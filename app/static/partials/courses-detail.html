@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head></head>
-<body> 
-    <h1>kfkfkfkf{[courseid]}</h1>
+<body>
+    <h1>{[course_id]}</h1>
+    <div class='row' ng-repeat='course in courses.data | filter:course_id'>
+        <div class="col-xs-12 col-sm-4"  >
+            <div id='phone-images'>
+                <img ng-src="{[course.image]}" width="100" height="100"/>
+            </div>
+                <p>Стоимость</p>
+                <p>Формат</p>
+                <p>Количество уроков</p>
+            <button>Записаться</button>
+        </div>
+           
+        <div id='aboutCourse' class="col-xs-12 col-sm-8">
+            <h1> {[course.name]}</h1>
+            <p>{[course.description]}</p>
+            This Specialization builds on the success of the Python for Everybody course and will introduce fundamental programming concepts including data structures, networked application program interfaces, and databases, using the Python programming language. In the Capstone Project, you’ll use the technologies learned throughout the Specialization to design and create your own applications for data retrieval, processing, and visualization.
+        </div>
+        <div class="col-xs-12">
+            <h1>Программа курса</h1>
+            
+        </div>
+    </div>
 </body>
+    
+ 
