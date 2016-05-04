@@ -2,8 +2,6 @@
 
 var app = angular.module('glavApp', ['ngRoute', 'ngCookies']); 
 
-
-
 var myapp = function() {}
 
 myapp.prototype.checkUserFields = function(user) {
@@ -14,14 +12,15 @@ myapp.prototype.checkUserFields = function(user) {
 myapp.prototype.run  = function(data) {
 
         if(!data.user || this.checkUserFields(data.user)) {
-            app.config(['$routeProvider', function($routeProvide){
+            app.config(['$routeProvider', '$locationProvider', function($routeProvide, locationProvider){
+                      
             $routeProvide
                 .when('/', {
                     templateUrl: 'partials/home.html',
                     controller: 'CoursesCtrl',
                 })
                 .when('/about',{
-                  templateUrl:'partials/profile_form.html',
+                  templateUrl:'partials/about.html',
                   controller:'AboutCtrl'
                 })
                 .when('/contact', {
@@ -32,7 +31,7 @@ myapp.prototype.run  = function(data) {
                     templateUrl:'partials/search.html',
                     controller:'SearchCtrl'
                 })
-                .when('/courses/:id',{
+                .when('/courses/:course_id',{
                     templateUrl: 'partials/courses-detail.html',
                     controller: 'CourseDetailCtrl'
                 })
@@ -42,6 +41,8 @@ myapp.prototype.run  = function(data) {
         }]);
         } else {
             app.config(['$routeProvider', function($routeProvide){
+                
+
             $routeProvide
                 .when('/', {
                     templateUrl: 'partials/profile_form.html',
@@ -56,32 +57,30 @@ myapp.prototype.run  = function(data) {
         }]);
         };
  
-        app.controller('CookCtrl', ['$cookies', '$scope', function($cookies, $scope){
-
-            var myCookie = $cookies.get('user_id');
-            $scope.vivod=myCookie;    
-
-        }]);
-    
-        app.controller('FormController', ['$scope', '$http', function($scope, $http){
+     
+   
+        app.controller('FormController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies){
             $scope.formInfo = {};
+            var myCookie = $cookies.get('user_id');
+            $scope.uid = myCookie;
             $scope.saveData = function() {
-                console.log($scope.formInfo)
+                $scope.formInfo.id = $scope.uid;
+                console.log($scope.formInfo);
                 $http({
-                    method: "PUT",
-                    url: 'create_profile/',
+                    method: "POST",
+                    url: '/create_profile',
                     headers: {'Content-Type': 'application/json' },
-                    data: {"data": $scope.formInfo},
+                    data: {"data": $scope.formInfo}
                 }).success(function(data){
-                    console.log(data)
+                    console.log(data);
                     console.log(headers)
                 });
                 //$http.post('/create_profile/', data).success(function(data){
                     //что-то делаем с полученными в ответ данными.обработка ответа сервера
                 //})
                 
-};
-            console.log(data)
+};console.log(data)
+        
 }]);
 
         app.controller('CoursesCtrl', function($scope, $http, $location){
@@ -101,8 +100,11 @@ myapp.prototype.run  = function(data) {
           $interpolateProvider.startSymbol('{[');
           $interpolateProvider.endSymbol(']}');
         }]);
-
-
+    
+    
+       
+        
+    
         /*phonecatApp.controller('AboutCtrl',[
           '$scope','$http', '$location',
           function($scope) {
@@ -118,17 +120,41 @@ myapp.prototype.run  = function(data) {
         ]);*/
 
         app.controller('SearchCtrl', function($scope, $http, $location){
-            console.log('$location.url() - ', $location.url());
-            console.log('$location.path() - ', $location.path());
-            console.log('$location.search() - ', $location.search());
-            console.log('$location.hash() - ', $location.hash());
+            $scope.submitFunc = function (form) {
 
-            $http.get('/courses').success(function(data){
-                    $scope.courses=data;
-                })   
+                $scope.res = [];
+
+                // http://127.0.0.1/search
+                $http.get("/search?q", {
+                    params: {q: $scope.query}
+                })
+                .then(
+                function (response) {
+                    console.log('success');
+                    console.log(response.data);
+                    $scope.res = response.data;
+                    console.log($scope.res)
+                },
+                function (response) {
+                    console.log("Err " + response.status + " " + response.statusText);
+                }
+            )
+            }
+
         });
+        app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams){
+            console.log($scope);
+            
+                $scope.course_id=$routeParams.course_id;
+                $http.get('/courses').success(function(data){
+                    $scope.courses=data;
+                })
+           
+        }]);
+    
 
-    }
+
+    };
 
 window.application = new myapp();
 
