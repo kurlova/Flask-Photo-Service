@@ -125,7 +125,7 @@ myapp.prototype.run  = function(data) {
                 $scope.res = [];
 
                 // http://127.0.0.1/search
-                $http.get("/search?q", {
+                $http.get("/search", {
                     params: {q: $scope.query}
                 })
                 .then(
