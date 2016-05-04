@@ -1,3 +1,6 @@
+#menu_profile{
+     
+}
 #login{
     background: black;
 }
@@ -34,6 +37,10 @@ h2, h1{
     border: 1px solid gray;
     height: 350px;
     padding: 5px;
+}
+#phone-images {
+    margin-top: 70px;
+  text-align: center;
 }
 
 #courses_search{

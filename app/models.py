@@ -45,7 +45,7 @@ class User(UserMixin, db.Model):
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True)
     courses_owned = db.relationship('Course', backref='creator', lazy='dynamic')
     courses_subscr = db.relationship('Course', secondary=users_courses_relationship,
-                                     backref='users')
+                                     backref='subscribers')
     cameras = db.relationship('Camera', secondary=users_cameras_relationship, backref='users')
 
 
@@ -69,8 +69,11 @@ class Course(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500), nullable=False)
     img = db.Column(db.String(128), nullable=True)
+    cost = db.Column(db.Integer)
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.name'))
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    course_format = db.Column(db.String, db.ForeignKey('formats.type'))
+    lessons = db.relationship("Lesson", backref='lessons')
 
 
 class Organization(db.Model):
@@ -97,3 +100,24 @@ class Camera(db.Model):
     model = db.Column(db.String(30), nullable=False)
 
 
+class Format(db.Model):
+    __tablename__ = 'formats'
+    type = db.Column(db.String, nullable=False, primary_key=True)
+    courses = db.relationship('Course', backref='format', lazy='dynamic')
+
+
+class Lesson(db.Model):
+    __tablename__ = 'lessons'
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(500))
+    videos = db.relationship('Video', backref='videos', lazy='dynamic')
+
+
+class Video(db.Model):
+    __tablename__ = 'videos'
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lessons.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    link = db.Column(db.String)
