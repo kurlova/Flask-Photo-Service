@@ -1,8 +1,12 @@
+#menu_profile{
+     
+}
 #login{
     background: black;
 }
 #header{
-    background="{{ url_for('static', filename='icon/foto.jpg')}}"
+    background-image: url(../icon/foto.jpg);
+    background-size: 100%
 }
 .form-search{
     margin-left: 40%;
@@ -21,8 +25,10 @@ h2, h1{
 }
 
 #profileform{
-    background: red;
-    
+    background: white;
+    padding-left: 200px;
+    padding-top: 50px;
+
 }
 .control-group{
     padding: 5px;
@@ -32,6 +38,17 @@ h2, h1{
     height: 350px;
     padding: 5px;
 }
+#phone-images {
+    margin-top: 70px;
+  text-align: center;
+}
+
+#courses_search{
+    border: 1px solid gray;
+    height: 150px;
+    padding: 5px;
+}
+
 #img{
-    
+
 }
