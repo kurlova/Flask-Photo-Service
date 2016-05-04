@@ -1,19 +1,34 @@
-  <div class="row col-lg-12" id='header'>
-        <h1>Онлайн-школа по фотографии</h1>
-            <form class="form-search" action="#/search" method="get">
-                <input type="text" class="input-medium search-query" name="q">
-                <button type="submit" class="btn">Поиск</button>
-               
-            </form>
-    </div>
+<head>
+   
+</head>
+
+<div  class="row col-lg-12" id='header'>
+    <h1>Онлайн-школа по фотографии</h1>
+
+
+<form class="form-search" action="#/search" method="GET" >
+    <input type='text' class="input-medium search-query" placeholder="Искать по всем темам" value="" name="q" ng-model="query">
+    <button type="sumbit" class="btn">Поиск</button>
+ 
+</form>
+</div>
+<h2>Популярные курсы</h2>
             
-    <div class="row col-lg-8 col-lg-offset-2">
-        <h2>Популярные курсы</h2>
-            <div class="col-lg-2 col-mg-2" id='courses' ng-repeat='course in courses.data'>
+    <div class="col-xs-12">
+        
+            <div class="col-xs-3 col-mg-4" id='courses' ng-repeat='course in courses.data'>
                 <p>LIKE</p>
                 <img ng-src="{[course.image]}" width="100" height="100"/>
                 <p><strong>{[course.name]}</strong></p>
-                <p><a class="btn btn-default" href="/courses/{[course.id]}" role="button">View details &raquo;</a></p>
+                <p><a class="btn btn-default" href="#/courses/{[course.id]}" role="button">View details &raquo;</a></p>
                 
             </div>
     </div>
+
+http://localhost:5000/?q=sdfghj#/search
+http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/search?q=
+http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/
+http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/
+http://localhost:5000/?q=фото#/
+
+http://localhost:5000/?q=aj#/search
