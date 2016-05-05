@@ -101,9 +101,31 @@ def subscribe_course():
     return flask.Response(response='ok', content_type='application/json; charset=utf-8')
 
 
+@app.route('/api/view_profile', methods=['GET', 'POST'])
+def view_profile():
+    user_init = request.get_json()
+    user_id = user_init["data"]["user_id"]
+    user = User.query.filter_by(id=user_id).first()
+    courses = User.query.filter_by(id=user_id).first().courses_subscr
+    user_data = {}
+    user_data['username'] = user.nickname
+    user_data['country'] = user.country
+    user_data['city'] = user.city
+    # user_data['cameras'] = user.cameras.first()
+    print(user.cameras)
+    subscriptions = []
+    for el in range(len(courses)):
+        subscriptions.append({"name": courses[el].name,
+                              "description": courses[el].description,
+                              "img": courses[el].img})
+    user_data['subscriptions'] = subscriptions
+    result = json.dumps({"data": user_data}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
+
+
 # Список курсов на которые подписан пользователь
 @app.route('/subscriptions', methods=['GET', 'POST'])
-def view_profile():
+def view_profile_s():
     user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
     convert = json.loads(user)
     user_id = convert["data"]["user_id"]

@@ -46,7 +46,7 @@ class User(UserMixin, db.Model):
     courses_owned = db.relationship('Course', backref='creator', lazy='dynamic')
     courses_subscr = db.relationship('Course', secondary=users_courses_relationship,
                                      backref='subscribers')
-    cameras = db.relationship('Camera', secondary=users_cameras_relationship, backref='users')
+    cameras = db.relationship('Camera', secondary=users_cameras_relationship, backref='cameras')
 
 
     def __repr__(self):

@@ -119,6 +119,20 @@ myapp.prototype.run  = function(data) {
 
         });
 
+        app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
+            $scope.subscribe = function(){
+                $scope.uid = $cookies.get('user_id');
+                $http({
+                    method: "POST",
+                    url: '/api/view_profile',
+                    headers: {'Content-Type': 'application/json' },
+                    data: {"data": $scope.uid}
+                }).success(function(data){
+                    console.log(data);
+                });
+            }
+        });
+
         app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', '$cookies',
             function($scope, $http, $location, $routeParams, $cookies){
             console.log($scope);
