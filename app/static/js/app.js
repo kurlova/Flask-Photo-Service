@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('glavApp', ['ngRoute', 'ngCookies']); 
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies']);
 
 
 
@@ -14,7 +14,7 @@ myapp.prototype.checkUserFields = function(user) {
 myapp.prototype.run  = function(data) {
 
         if(!data.user || this.checkUserFields(data.user)) {
-            app.config(['$routeProvider', function($routeProvide){
+            app.config(['$routeProvider', '$locationProvider', function($routeProvide, locationProvider){
             $routeProvide
                 .when('/', {
                     templateUrl: 'partials/home.html',
@@ -32,7 +32,11 @@ myapp.prototype.run  = function(data) {
                     templateUrl:'partials/search.html',
                     controller:'SearchCtrl'
                 })
-                .when('/courses/:id',{
+                .when('/courses/:course_id',{
+                    templateUrl: 'partials/courses-detail.html',
+                    controller: 'CourseDetailCtrl'
+                })
+                .when('/subscribe',{
                     templateUrl: 'partials/courses-detail.html',
                     controller: 'CourseDetailCtrl'
                 })
@@ -90,6 +94,10 @@ myapp.prototype.run  = function(data) {
         app.controller('SearchCtrl', function($scope, $http, $location){
             $scope.submitFunc = function (form) {
 
+                $http.get('/courses').success(function(data){
+                    $scope.courses=data;
+                });
+
                 $scope.res = [];
 
                 // http://127.0.0.1/search
@@ -111,35 +119,81 @@ myapp.prototype.run  = function(data) {
 
         });
 
+        app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', '$cookies',
+            function($scope, $http, $location, $routeParams, $cookies){
+            console.log($scope);
+
+                $scope.course_id=$routeParams.course_id;
+                $http.get('/courses').success(function(data){
+                    $scope.courses=data;
+                    console.log(data);
+                    $scope.filterId = $scope.courses['data'][$scope.course_id - 1];
+                    console.log($scope.filterId);
+                    if($scope.filterId.cost == null) {
+                        $scope.filterId.cost = 'Free';
+                        console.log($scope.filterId.cost)
+                    }
+                    else {
+                        $scope.filterId.cost = $scope.filterId.cost + ' p.'
+                    }
+                });
+                //$scope.subscr = element(by.id('subscr'));
+                //expect($scope.subscr.isDisplayed()).toBeTruthy();
+            $scope.subscribe = function(id) {
+                $scope.cid = id;
+                console.log($scope.cid);
+                $scope.uid = $cookies.get('user_id');
+                console.log($scope.uid);
+                $scope.uc_json = {};
+                $scope.uc_json.user_id = $scope.uid;
+                $scope.uc_json.course_id = $scope.cid;
+                console.log($scope.uc_json);
+                $http({
+                    method: "POST",
+                    url: '/subscribe',
+                    headers: {'Content-Type': 'application/json' },
+                    data: {"data": $scope.uc_json}
+                }).success(function(data){
+                    console.log(data);
+                    console.log(headers);
+                    //element(by.model('subscribed')).click();
+                    //expect($scope.subscr.isDisplayed()).toBeFalsy();
+
+                });
+            }
+
+        }]);
+
         app.config(['$interpolateProvider', function($interpolateProvider) {
           $interpolateProvider.startSymbol('{[');
           $interpolateProvider.endSymbol(']}');
         }]);
 
-
-        /*phonecatApp.controller('AboutCtrl',[
-          '$scope','$http', '$location',
-          function($scope) {
-          }
-        ]);
-        
-        phonecatApp.controller('ContactCtrl',[
-          '$scope','$http', '$location',
-          function($scope, $http, $location) {
-          }
-        ]);*/
-
         app.controller('CoursesCtrl', function($scope, $http, $location){
-            console.log('$location.url() - ', $location.url());
-            console.log('$location.path() - ', $location.path());
-            console.log('$location.search() - ', $location.search());
-            console.log('$location.hash() - ', $location.hash());
 
             $http.get('/courses').success(function(data){
-                    $scope.courses=data;
-                })
-        });
+                $scope.courses=data;
 
+            });
+
+
+            $scope.goToFunc = function(cid) {
+
+                $scope.id = cid;
+                console.log($scope.id);
+
+                $http.get('/course_details', {
+                    params: {q: $scope.id}
+                }).then(
+                    function(response){
+                        console.log('success')
+                    },
+                    function(response){
+                        console.log("Err " + response.status + " " + response.statusText)
+                    }
+                )
+            }
+        });
     };
 
 window.application = new myapp();

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="glavApp">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>ZZOOMY - онлайн курсы по фотографии от ведущих специалистов</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
     <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
@@ -23,18 +23,17 @@
                 <li class="active"><a href="#/">Home</a></li>
                 <li><a href="#/about">form</a></li>
                 <li><a href="#/contact">Contact</a></li>
-              </ul>
-                {% for message in get_flashed_messages() %}
-                <p><b>Error</b>: {{ message }}</p>
-                    {% endfor %}
+                  </ul>
                     {% if current_user.is_authenticated %}
-                <h2>Hi, {{ current_user.nickname}}!</h2>
-                <p><a href="{{ url_for('logout') }}">Logout</a></p>
+                        <div style="float:right">
+                            <div id="loggedUser">Привет, {{ current_user.nickname }}!
+                            <a class="btn btn-default" href="{{ url_for('logout') }}">Logout</a></div>
+                        </div>
                     {% else %}
-                <a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/facebook.png" width="40" height="40" alt="Facebook"></a>
-                <a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/vkontakte.png" width="40" height="40" alt="Vkontakte"></a>
-                <a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/google_plus.png" width="40" height="40" alt="Google"></a>
-                <a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/twitter.png" width="40" height="40" alt="Twitter"></a>
+                        <a href="{{ url_for('oauth_authorize', provider='facebook') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/facebook.png" width="40" height="40" alt="Facebook"></a>
+                        <a href="{{ url_for('oauth_authorize', provider='vkontakte') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/vkontakte.png" width="40" height="40" alt="Vkontakte"></a>
+                        <a href="{{ url_for('oauth_authorize', provider='google') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/google_plus.png" width="40" height="40" alt="Google"></a>
+                        <a href="{{ url_for('oauth_authorize', provider='twitter') }}"><img src="https://www.awicons.com/free-icons/download/social-media-icons/flat-shadow-social-media-icons-by-lokas-software/png/48/twitter.png" width="40" height="40" alt="Twitter"></a>
                     {% endif %}
           </div><!-- /.nav-collapse -->
               
@@ -54,11 +53,13 @@
     <div ng-controller="CookieCtrl">
         {[vivod]}
     </div>
-       
+
+
     <script src="{{url_for('static', filename='bower_components/angular/angular.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-route.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-cookies.js')}}"></script>
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
+    <script src="{{url_for('static', filename='bower_components/angular/angular-utf8-base64.min.js')}}"></script>
     <script>
         window.application.run({user : {% if current_user.is_authenticated %} {{current_user.to_json()|safe }} {%else%} false {% endif %}})
     </script>

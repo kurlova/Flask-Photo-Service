@@ -26,10 +26,12 @@ def view_courses():
     courses_storg = []
     for el in range(len(courses)):
         courses_storg.append({"id": courses[el].id,
-                            "name": courses[el].name,
-                            "description": courses[el].description,
-                            "image": courses[el].img
-                            })
+                              "name": courses[el].name,
+                              "description": courses[el].description,
+                              "image": courses[el].img,
+                              "cost": courses[el].cost,
+                              "format": courses[el].course_format
+                              })
     result = json.dumps({"data": courses_storg}, ensure_ascii=False)
     return flask.Response(response=result, content_type='application/json; charset=utf-8',)
 
@@ -88,10 +90,9 @@ def created_courses():
 # Подписка на курс
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe_course():
-    subscription = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
-    convert = json.loads(subscription)
-    user_id = convert["data"]["user_id"]
-    course_id = convert["data"]["course_id"]
+    subscription = request.get_json()
+    user_id = subscription["data"]["user_id"]
+    course_id = subscription["data"]["course_id"]
     user = User.query.filter_by(id=user_id).first()
     course = Course.query.filter_by(id=course_id).first()
     user.courses_subscr.append(course)
@@ -116,6 +117,19 @@ def view_profile():
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 
+app.route('/course_details', methods=['GET'])
+def view_course_details():
+    param = request.args.get('q')
+    course = Course.query.filter_by(id=param).first()
+    name = course.name
+    description = course.description
+    course_json = {'name': name,
+                   'description': description}
+    result = json.dumps({"data": course_json}, ensure_ascii=False)
+    print(result)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
+
+
 # Удаление курса
 @app.route('/delete_course', methods=['GET', 'POST'])
 def delete_course():
@@ -133,36 +147,6 @@ def delete_course():
             result = 'ok'
             break
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
-
-# Создание профиля для нового пользователя
-'''@app.route('/create_profile', methods=['GET', 'POST'])
-def create_profile():
-    new_user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
-    convert = json.loads(new_user)
-    id = convert["data"]["id"]
-    email = convert["data"]["email"]
-    username = convert["data"]["username"]
-    country = convert["data"]["country"]
-    city = convert["data"]["city"]
-    # camera = convert["data"]["camera"]
-    cams_nest = convert["data"]["cameras"]
-    cams = []
-    for cam in range(len(cams_nest)):
-        cams.append(cams_nest[cam]["name"])
-    user = User.query.filter_by(id=id).first()
-    user.nickname = username
-    user.email = email
-    user.country = country
-    user.city = city
-    # db.session.commit()
-    # user.cameras = camera
-    for cam in range(len(cams)):
-        camera = Camera.query.filter_by(model=cams[cam]).first()
-        user.cameras.append(camera)
-    # c1 = Camera.query.filter_by(model=str(cams[0])).first()
-    # print(c1)
-    db.session.commit()
-    return flask.Response(response='jk', content_type='application/json; charset=utf-8')'''
 
 
 @app.route('/create_profile', methods=['GET', 'POST'])
@@ -231,7 +215,7 @@ def oauth_callback(provider):
         id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
         response.set_cookie('user_id', value=bytes([id]))
-        response.set_cookie('redirect', value='create_profile')
+        response.set_cookie('new_user', value='')
         return response
     else:
         login_user(user, True)
