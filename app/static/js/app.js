@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('glavApp', ['ngRoute', 'ngCookies']); 
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies', 'mediaPlayer']); 
 
 var myapp = function() {}
 
@@ -27,14 +27,26 @@ myapp.prototype.run  = function(data) {
                   templateUrl:'partials/contact.html',
                   controller:'ContactCtrl'
                 })
-                .when('/search',{
+                .when('/search/:q',{
                     templateUrl:'partials/search.html',
                     controller:'SearchCtrl'
                 })
-                .when('/courses/:course_id',{
+                .when('/coursesS/:course_id',{
                     templateUrl: 'partials/courses-detail.html',
                     controller: 'CourseDetailCtrl'
                 })
+                .when('/courses/:course_id/home',{
+                    templateUrl: 'partials/course.html',
+                    controller: 'CourseCtrl'
+                })
+                .when('/subscribe',{
+                    templateUrl: 'partials/courses-detail.html',
+                    controller: 'CourseDetailCtrl'
+                })
+                .when('/users/:user_id', {
+                    templateUrl: 'partials/profile.html',
+                    controller: 'ProfileCtrl'
+            })
                 .otherwise({
                     redirectTo:'/'
                 });
@@ -118,6 +130,13 @@ myapp.prototype.run  = function(data) {
 
           }
         ]);*/
+    
+    app.controller('CourseCtrl',[
+          '$scope','$http', '$location',
+          function($scope, $http, $location) {
+
+          }
+        ])
 
         app.controller('SearchCtrl', function($scope, $http, $location){
             $scope.submitFunc = function (form) {
@@ -142,16 +161,86 @@ myapp.prototype.run  = function(data) {
             }
 
         });
-        app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams){
+        
+        app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
+            $scope.subscribe = function(){
+                $scope.uid = $cookies.get('user_id');
+                $http({
+                    method: "POST",
+                    url: '/api/view_profile',
+                    headers: {'Content-Type': 'application/json' },
+                    data: {"data": $scope.uid}
+                }).success(function(data){
+                    console.log(data);
+                });
+            }
+        });
+    
+        app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', '$cookies',
+            function($scope, $http, $location, $routeParams, $cookies){
             console.log($scope);
-            
+
                 $scope.course_id=$routeParams.course_id;
                 $http.get('/courses').success(function(data){
                     $scope.courses=data;
-                })
+                    console.log(data);
+                    $scope.filterId = $scope.courses['data'][$scope.course_id - 1];
+                    console.log($scope.filterId);
+                    if($scope.filterId.cost == null) {
+                        $scope.filterId.cost = 'Free';
+                        console.log($scope.filterId.cost)
+                    }
+                    else {
+                        $scope.filterId.cost = $scope.filterId.cost + ' p.'
+                    }
+                });
+                //$scope.subscr = element(by.id('subscr'));
+                //expect($scope.subscr.isDisplayed()).toBeTruthy();
+            $scope.subscribe = function(id) {
+                $scope.cid = id;
+                console.log($scope.cid);
+                $scope.uid = $cookies.get('user_id');
+                console.log($scope.uid);
+                $scope.uc_json = {};
+                $scope.uc_json.user_id = $scope.uid;
+                $scope.uc_json.course_id = $scope.cid;
+                console.log($scope.uc_json);
+                $http({
+                    method: "POST",
+                    url: '/subscribe',
+                    headers: {'Content-Type': 'application/json' },
+                    data: {"data": $scope.uc_json}
+                }).success(function(data){
+                    console.log(data);
+                    console.log(headers);
+                    //element(by.model('subscribed')).click();
+                    //expect($scope.subscr.isDisplayed()).toBeFalsy();
+
+                });
+            }
+
+        }]);
+    
+        app.controller('ProfileCtrl', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams){
+            console.log($scope);
+            
+                $scope.user_id=$routeParams.user_id;
            
         }]);
     
+    
+        
+        app.controller('MyVideoPlayer', function($scope){
+            // access properties
+            console.log($scope.video1.network);
+            console.log($scope.video1.ended);
+
+            $scope.mySpecialPlayButton = function () {
+                $scope.customText = 'I started angular-media-player with a custom defined action!';
+                $scope.video1.playPause();
+            };
+        })
+        
 
 
     };
