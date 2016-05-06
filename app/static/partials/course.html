@@ -1,0 +1,34 @@
+<div class='row'>
+    <div class="col-xs-12 col-sm-12"><h3>Название урока</h3></div>
+    
+    <div class="col-xs-8 col-sm-8" ng-controller='MyVideoPlayer'>
+        <video media-player='video1' controls>
+            <source src="movie.mp4" type="video/mp4" />
+            <source src="movie.ogg" type="video/ogg" />
+        </video>
+        <span ng-show='video1.playing'>Запуск</span>
+        <span ng-show='!video1.playing'>Пауза</span>
+    </div>
+    
+   
+    <div class="col-xs-4 col-sm-4">
+        <label class="checkbox inline">
+          <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
+        </label>
+    </div>
+    <div class="col-xs-8 col-sm-8">
+        <textarea rows="5"></textarea>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Отправить</button>
+        </div>
+    </div>
+    <div class="col-xs-4 col-sm-4">sdfg</div>
+</div>
+
+
