@@ -1,8 +1,6 @@
 'use strict';
 
-var app = angular.module('glavApp', ['ngRoute', 'ngCookies']);
-
-
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies', 'mediaPlayer']);
 
 var myapp = function() {};
 
@@ -11,41 +9,53 @@ myapp.prototype.checkUserFields = function(user) {
         ? user.city && user.email
         : false;
 };
+
 myapp.prototype.run  = function(data) {
 
-        if(!data.user || this.checkUserFields(data.user)) {
-            app.config(['$routeProvider', '$locationProvider', function($routeProvide, locationProvider){
-            $routeProvide
+    if(!data.user || this.checkUserFields(data.user)) {
+        app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
+            //$locationProvider.html5Mode(true);
+            $routeProvider
                 .when('/', {
                     templateUrl: 'partials/home.html',
                     controller: 'CoursesCtrl'
                 })
                 .when('/about',{
-                  templateUrl:'partials/profile_form.html',
-                  controller:'AboutCtrl'
+                    templateUrl:'/partials/about.html',
+                    controller:'AboutCtrl'
                 })
                 .when('/contact', {
-                  templateUrl:'partials/contact.html',
-                  controller:'ContactCtrl'
+                    templateUrl:'partials/contact.html',
+                    controller:'ContactCtrl'
                 })
-                .when('/search',{
-                    templateUrl:'partials/search.html',
-                    controller:'SearchCtrl'
-                })
-                .when('/courses/:course_id',{
-                    templateUrl: 'partials/courses-detail.html',
+                //.when('/search/:q',{
+                //    templateUrl:'partials/search.html',
+                //    controller:'SearchCtrl'
+                //})
+                .when('/api/course_details/:course_id',{
+                    templateUrl: 'partials/course_details.html',
                     controller: 'CourseDetailCtrl'
+                })
+                .when('/courses/:course_id/lessons',{
+                    templateUrl: 'partials/course.html',
+                    controller: 'LessonCtrl'
                 })
                 .when('/subscribe',{
                     templateUrl: 'partials/courses-detail.html',
                     controller: 'CourseDetailCtrl'
                 })
+                .when('/users/:user_id', {
+                    templateUrl: 'partials/profile.html',
+                    controller: 'ProfileCtrl'
+                })
                 .otherwise({
                     redirectTo:'/'
                 });
         }]);
-        } else {
-            app.config(['$routeProvider', function($routeProvide){
+    } else {
+        app.config(['$routeProvider', function($routeProvide){
+
+
             $routeProvide
                 .when('/', {
                     templateUrl: 'partials/profile_form.html',
@@ -54,160 +64,247 @@ myapp.prototype.run  = function(data) {
                         user: function(){
                             return data.user; // or primitive, or promise or something else
                         }
-                    } 
-            });
-            
-        }]);
-        }
- 
-        app.controller('CookieCtrl', ['$cookies', '$scope', function($cookies, $scope){
-
-            var myCookie = $cookies.get('user_id');
-            $scope.vivod=myCookie;    
-
-        }]);
-    
-        app.controller('FormController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies){
-            $scope.formInfo = {};
-            var myCookie = $cookies.get('user_id');
-            $scope.uid = myCookie;
-            $scope.saveData = function() {
-                $scope.formInfo.id = $scope.uid;
-                console.log($scope.formInfo);
-                $http({
-                    method: "POST",
-                    url: '/create_profile',
-                    headers: {'Content-Type': 'application/json' },
-                    data: {"data": $scope.formInfo}
-                }).success(function(data){
-                    console.log(data);
-                    console.log(headers)
-                });
-                //$http.post('/create_profile/', data).success(function(data){
-                    //что-то делаем с полученными в ответ данными.обработка ответа сервера
-                //})
-                
-};
-            console.log(data)
-}]);
-
-        app.controller('SearchCtrl', function($scope, $http, $location){
-            $scope.submitFunc = function (form) {
-
-                $http.get('/courses').success(function(data){
-                    $scope.courses=data;
+                    }
                 });
 
-                $scope.res = [];
+        }]);
+    }
 
-                // http://127.0.0.1/search
-                $http.get("/search", {
-                    params: {q: $scope.query}
-                })
+    app.controller('CoursesCtrl', ['$scope', '$http', '$location', function($scope, $http, $location){
+        console.log($scope);
+        console.log('$location.url() - ', $location.url());
+        console.log('$location.path() - ', $location.path());
+        console.log('$location.search() - ', $location.search());
+        console.log('$location.hash() - ', $location.hash());
+
+        $http.get('/courses').success(function(data){
+            $scope.courses=data;
+            console.log('data - ', data);
+        });
+
+        $scope.show_popular = true;
+
+        $scope.searchCourse = function (form) {
+            $scope.res = [];
+
+            //http://127.0.0.1/search
+            $http.get("/search", {
+                params: {q: $scope.query}
+            })
                 .then(
                 function (response) {
                     console.log('success');
                     console.log(response.data);
                     $scope.res = response.data;
-                    console.log($scope.res)
+                    console.log($scope.res);
+                    $scope.show_popular = false;
                 },
                 function (response) {
                     console.log("Err " + response.status + " " + response.statusText);
                 }
             )
-            }
+        }
+    }]);
 
-        });
-
-        app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
-            $scope.subscribe = function(){
-                $scope.uid = $cookies.get('user_id');
+    app.controller('FormController', ['$scope', '$http', '$cookies', '$location',
+        function($scope, $http, $cookies, $location){
+            $scope.formInfo = {};
+            $scope.uid = $cookies.get('user_id');
+            $scope.saveData = function() {
+                $scope.formInfo.id = $scope.uid;
+                console.log($scope.formInfo);
                 $http({
                     method: "POST",
-                    url: '/api/view_profile',
+                    url: '/api/create_profile',
                     headers: {'Content-Type': 'application/json' },
-                    data: {"data": $scope.uid}
+                    data: {"data": $scope.formInfo}
                 }).success(function(data){
                     console.log(data);
+                    $http.get('/courses').then(
+                        function(){
+                            console.log('works')
+                        },
+                        function(){
+                            console.log('not works')
+                        }
+                    )
                 });
             }
-        });
 
-        app.controller('CourseDetailCtrl', ['$scope', '$http', '$location', '$routeParams', '$cookies',
-            function($scope, $http, $location, $routeParams, $cookies){
+        }]);
+
+    app.controller('CourseCtrl',[
+        '$scope','$http', '$location',
+        function($scope, $http, $location) {
+
+        }
+    ]);
+
+    app.controller('SearchCtrl', ['$scope', '$http', '$location', '$routeParams',
+        function($scope, $http, $location, $routeParams){
+            $scope.submitFunc = function (form) {
+
+                $scope.res = [];
+
+                //http://127.0.0.1/search
+                $http.get("/search", {
+                    params: {q: $scope.query}
+                })
+                    .then(
+                    function (response) {
+                        console.log('success');
+                        console.log(response.data);
+                        $scope.res = response.data;
+                        console.log($scope.res)
+                    },
+                    function (response) {
+                        console.log("Err " + response.status + " " + response.statusText);
+                    }
+                )
+            }
+
+        }]);
+
+    app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
+        $scope.subscribe = function(){
+            $scope.uid = $cookies.get('user_id');
+            $http({
+                method: "POST",
+                url: '/api/view_profile',
+                headers: {'Content-Type': 'application/json' },
+                data: {"data": $scope.uid}
+            }).success(function(data){
+                console.log(data);
+            });
+        }
+    });
+
+    app.controller('CourseDetailCtrl', ['$scope', '$http', '$cookies', '$location', '$routeParams',
+        function($scope, $http, $cookies, $location, $routeParams){
             console.log($scope);
 
-                $scope.course_id=$routeParams.course_id;
-                $http.get('/courses').success(function(data){
-                    $scope.courses=data;
-                    console.log(data);
-                    $scope.filterId = $scope.courses['data'][$scope.course_id - 1];
-                    console.log($scope.filterId);
-                    if($scope.filterId.cost == null) {
-                        $scope.filterId.cost = 'Free';
-                        console.log($scope.filterId.cost)
-                    }
-                    else {
-                        $scope.filterId.cost = $scope.filterId.cost + ' p.'
-                    }
-                });
-                //$scope.subscr = element(by.id('subscr'));
-                //expect($scope.subscr.isDisplayed()).toBeTruthy();
+            $scope.course_id=$routeParams.course_id;
+            $scope.user_id = $cookies.get('user_id');
+            $scope.cu_data = {};
+            $scope.cu_data['user_id'] = $scope.user_id.toString();
+            $scope.cu_data['course_id'] = $scope.course_id.toString();
+            console.log($scope.cu_data);
+            $http({
+                method: "POST",
+                url: 'api/course_details',
+                headers: {'Content-Type': 'application/json' },
+                data: {"data": $scope.cu_data}
+            }).success(function(data){
+                console.log(data);
+                $scope.course = data["data"];
+                if($scope.course["cost"] == null) {
+                    $scope.course["cost"] = 'Free'
+                }
+                else {
+                    $scope.course["cost"] = $scope.course["cost"] + ' p.'
+                }
+                if($scope.course["subscribed"]=='true'){
+                    $scope.if_subscr = true;
+                }
+                else {
+                    $scope.if_subscr = false;
+                }
+            });
+
             $scope.subscribe = function(id) {
                 $scope.cid = id;
                 console.log($scope.cid);
                 $scope.uid = $cookies.get('user_id');
                 console.log($scope.uid);
                 $scope.uc_json = {};
-                $scope.uc_json.user_id = $scope.uid;
-                $scope.uc_json.course_id = $scope.cid;
+                $scope.uc_json.user_id = parseInt($scope.uid);
+                $scope.uc_json.course_id = parseInt($scope.cid);
                 console.log($scope.uc_json);
                 $http({
                     method: "POST",
                     url: '/subscribe',
                     headers: {'Content-Type': 'application/json' },
                     data: {"data": $scope.uc_json}
-                }).success(function(data){
-                    console.log(data);
-                    console.log(headers);
-                    //element(by.model('subscribed')).click();
-                    //expect($scope.subscr.isDisplayed()).toBeFalsy();
-
-                });
-            }
-
-        }]);
-
-        app.config(['$interpolateProvider', function($interpolateProvider) {
-          $interpolateProvider.startSymbol('{[');
-          $interpolateProvider.endSymbol(']}');
-        }]);
-
-        app.controller('CoursesCtrl', function($scope, $http, $location){
-
-            $http.get('/courses').success(function(data){
-                $scope.courses=data;
-
-            });
-
-
-            $scope.goToFunc = function(cid) {
-
-                $scope.id = cid;
-                console.log($scope.id);
-
-                $http.get('/course_details', {
-                    params: {q: $scope.id}
                 }).then(
-                    function(response){
-                        console.log('success')
-                    },
-                    function(response){
-                        console.log("Err " + response.status + " " + response.statusText)
-                    }
-                )
+                    function(data){
+                        console.log(data);
+                        $scope.if_subscr = true;
+                        console.log($scope.if_subscr);
+                    });
+            };
+
+            $scope.seeDetails = function(id){
+                console.log('works');
+                $location.path('/courses/' + id.toString() + '/lessons');
+                console.log($location.path)
             }
-        });
-    };
+
+        }]);
+
+    app.controller('ProfileCtrl', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams){
+        console.log($scope);
+
+        $scope.user_id=$routeParams.user_id;
+
+    }]);
+
+    app.controller('LessonCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams){
+        $scope.link = '';
+        //достать ид курса
+        $scope.course_id=$routeParams.course_id;
+        console.log($scope.course_id);
+        $scope.course_data = {};
+        $scope.course_data['id'] = $scope.course_id;
+        // сделать хттп гет на адрес который даст данные урока
+        $http({
+            method: "POST",
+            url: 'api/lessons',
+            headers: {'Content-Type': 'application/json' },
+            data: {"data": $scope.course_data}
+        }).then(
+            function (data) {
+                $scope.lesson = data['data']['data']['0'];
+                console.log($scope.lesson);
+                $scope.link = data['data']['data']['0']['videos']['link'];
+                console.log($scope.link);
+                $scope.name = $scope.lesson.name;
+                $scope.description = $scope.lesson.description;
+                //$scope.lesson = data['data'];
+                //$scope.link = $scope.lesson['videos']['link'];
+                //console.log($scope.link)
+            },
+            function () {
+                console.log('wrong')
+            }
+        );
+        $scope.getIframeSrc = function() {
+            return $scope.link;
+        };
+    }]);
+
+    //app.controller('MyVideoPlayer', function($scope){
+    //     access properties
+    //console.log($scope.video1.network);
+    //console.log($scope.video1.ended);
+    //
+    //$scope.mySpecialPlayButton = function () {
+    //    $scope.customText = 'I started angular-media-player with a custom defined action!';
+    //    $scope.video1.playPause();
+    //};
+    //});
+
+    app.config(['$interpolateProvider', function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{[');
+        $interpolateProvider.endSymbol(']}');
+    }]);
+
+    app.config(function($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist([
+            'self',
+            'https://www.youtube.com/**'
+        ]);
+    });
+
+};
 
 window.application = new myapp();

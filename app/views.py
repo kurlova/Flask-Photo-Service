@@ -50,7 +50,9 @@ def search():
     for el in indexes:
         search_res.append({"name": db_content[el].name,
                            "description": db_content[el].description,
-                           "image": db_content[el].img})
+                           "image": db_content[el].img,
+                           "id": db_content[el].id
+                           })
     result = json.dumps({"data": search_res}, ensure_ascii=False)
     print(result)
     return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
@@ -91,19 +93,21 @@ def created_courses():
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe_course():
     subscription = request.get_json()
-    user_id = subscription["data"]["user_id"]
-    course_id = subscription["data"]["course_id"]
+    print(subscription)
+    user_id = int(subscription["data"]["user_id"])
+    course_id = int(subscription["data"]["course_id"])
     user = User.query.filter_by(id=user_id).first()
     course = Course.query.filter_by(id=course_id).first()
     user.courses_subscr.append(course)
     db.session.add(user)
     db.session.commit()
-    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
-
+    # return flask.Response(response=jsonify({'status':'ok'}, 200), content_type='application/json; charset=utf-8')
+    return jsonify({'status':'ok'}), 200
 
 @app.route('/api/view_profile', methods=['GET', 'POST'])
 def view_profile():
     user_init = request.get_json()
+    print(user_init)
     user_id = user_init["data"]["user_id"]
     user = User.query.filter_by(id=user_id).first()
     courses = User.query.filter_by(id=user_id).first().courses_subscr
@@ -139,15 +143,51 @@ def view_profile_s():
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 
-app.route('/course_details', methods=['GET'])
+@app.route('/api/course_details', methods=['GET', 'POST'])
 def view_course_details():
-    param = request.args.get('q')
-    course = Course.query.filter_by(id=param).first()
-    name = course.name
-    description = course.description
-    course_json = {'name': name,
-                   'description': description}
+    # param = request.args.get('q')
+    user_init = request.get_json()
+    print(user_init)
+    cid = user_init["data"]["course_id"]
+    uid = user_init["data"]["user_id"]
+    course = Course.query.filter_by(id=cid).first()
+    course_json = {}
+    course_json['id'] = course.id
+    course_json['name'] = course.name
+    course_json['description'] = course.description
+    course_json['image'] = course.img
+    course_json['cost'] = course.cost
+    course_json['format'] = course.course_format
+    course_json['subscribed'] = 'false'
+    user_courses = User.query.filter_by(id=uid).first().courses_subscr
+    for i in range(len(user_courses)):
+        print(user_courses[i].id)
+        if user_courses[i].id == int(cid):
+            course_json['subscribed'] = 'true'
     result = json.dumps({"data": course_json}, ensure_ascii=False)
+    print(result)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
+
+
+@app.route('/api/lessons', methods=['POST'])
+def return_lessons():
+    course_data = request.get_json()
+    print(course_data)
+    course_id = course_data['data']['id']
+    print(course_id)
+    course = Course.query.filter_by(id=course_id).first()
+    lessons = []
+    videos_obj = course.lessons[0].videos[0]
+    videos = {}
+    videos['id'] = videos_obj.id
+    videos['name'] = videos_obj.name
+    videos['link'] = videos_obj.link
+    for el in range(len(course.lessons)):
+        lessons.append({"id": course.lessons[el].id,
+                        "name": course.lessons[el].name,
+                        "description": course.lessons[el].description,
+                        "videos": videos})
+    result = json.dumps({"data": lessons}, ensure_ascii=False)
     print(result)
     return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
 
@@ -171,7 +211,7 @@ def delete_course():
     return flask.Response(response=result, content_type='application/json; charset=utf-8')
 
 
-@app.route('/create_profile', methods=['GET', 'POST'])
+@app.route('/api/create_profile', methods=['GET', 'POST'])
 def create_profile():
     new_user = request.get_json()
     print(new_user)
@@ -187,6 +227,7 @@ def create_profile():
     # for cam in range(len(cams_nest)):
     #     cams.append(cams_nest[cam]["name"])
     user = User.query.filter_by(id=id).first()
+    print(user)
     user.nickname = username
     user.email = email
     user.country = country
@@ -196,7 +237,7 @@ def create_profile():
     #     camera = Camera.query.filter_by(model=cams[cam]).first()
     #     user.cameras.append(camera)
     db.session.commit()
-    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
+    return jsonify({'status':'ok'}), 200
 
 
 @app.route('/logout')
@@ -236,7 +277,7 @@ def oauth_callback(provider):
         login_user(user, True)
         id = User.query.filter_by(social_id=social_id).first().id
         response = redirect(url_for('index'))
-        response.set_cookie('user_id', value=bytes([id]))
+        response.set_cookie('user_id', value=bytes(str(id), 'utf-8'))
         response.set_cookie('new_user', value='')
         return response
     else:
@@ -258,3 +299,28 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,HEAD,POST')
     return response
+
+
+@app.route('/partials/course')
+def send_course():
+    return app.send_static_file('app/static/partials/course.html')
+
+
+@app.route('/partials/home')
+def send_home():
+    return app.send_static_file('app/static/partials/home.html')
+
+
+@app.route('/partials/about')
+def send_about():
+    return app.send_static_file('app/static/partials/about.html')
+
+
+@app.route('/partials/search')
+def send_search():
+    return app.send_static_file('app/static/partials/search.html')
+
+
+@app.route('/partials/course_details')
+def send_details():
+    return app.send_static_file('app/static/partials/course_details.html')

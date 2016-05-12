@@ -6,8 +6,9 @@
 }
 #header{
     background-image: url(../icon/foto.jpg);
-    background-size: 100%
+    background-size: 100%;
 }
+
 .form-search{
     margin-left: 40%;
 }
@@ -15,8 +16,11 @@ h2, h1{
     text-align: center;
     padding: 60px;
 }
+h3{
+    padding: 60px;
+}
 #content{
-    background: ghostwhite;
+    background: gray;
     height: 60px;
 }
 #footer{
@@ -38,17 +42,16 @@ h2, h1{
     height: 350px;
     padding: 5px;
 }
-#phone-images {
-    margin-top: 70px;
-  text-align: center;
-}
 
 #courses_search{
     border: 1px solid gray;
     height: 150px;
     padding: 5px;
 }
-
 #loggedUser{
     color: #00b3ee;
+}
+
+#img{
+
 }

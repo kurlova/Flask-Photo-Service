@@ -1,29 +1,31 @@
-<div class="row col-lg-12" id='header'>
+<div class="row col-lg-12" id="header">
     <h1>Онлайн-школа по фотографии</h1>
 </div>
 
-<div ng-controller="SearchCtrl">
-  <form class="form-search" name="submitParam" ng-submit="submitFunc(submitParam)">
-    <input type="text" class="input-medium search-query" name="q" ng-model="query">
+<div>
+  <form class="form-search" name="param" ng-submit="searchCourse(param)">
+    <input type="text" class="input-medium search-query"
+           placeholder="Искать по всем темам" name="q" ng-model="query">
     <button type="submit" class="btn">Поиск</button>
-  </form>
-  <div ng-controller="SearchCtrl">
-      <h2>Результаты поиска</h2>
-    <div ng-repeat="course in res.data" id="courses_search">
-      <p><div class="col-xs-2"><img ng-src="{[course.image]}" width="100" height="100"></div>
-      <div class="col-xs-10">{[course.name]}</div></p>
-    </div>
-  </div>
+  </form>   
 </div>
 
-
-    <div class="row col-lg-8 col-lg-offset-2" ng-controller="CoursesCtrl">
-        <h2>Популярные курсы</h2>
-            <div class="col-lg-2 col-mg-2" id='courses' ng-repeat='course in courses.data'>
-                <p>LIKE</p>
-                <img ng-src="{[course.image]}" width="100" height="100"/>
-                <p><strong>{[course.name]}</strong></p>
-                <p><a class="btn btn-default" href="#/courses/{[course.id]}" role="button">View details &raquo;</a></p>
-                
-            </div>
+<div id="popular" ng-show="show_popular">
+    <h2>Популярные курсы</h2>
+    <div class="col-xs-12">
+        <div class="col-xs-3 col-mg-4" id='courses' ng-repeat='course in courses.data'>
+            <img ng-src="{[course.image]}" width="100" height="100"/>
+            <p><strong>{[course.name]}</strong></p>
+            <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
+        </div>
     </div>
+</div>
+
+<div id="searched" ng-hide="show_popular">
+    <h2>Результаты поиска</h2>
+    <div ng-repeat="course in res.data" id="courses_search">
+        <div class="col-xs-2"><img ng-src="{[course.image]}" width="100" height="100"></div>
+        <div class="col-xs-10">{[course.name]}</div>
+        <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
+    </div>
+</div>

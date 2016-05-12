@@ -73,7 +73,7 @@ class Course(db.Model):
     org_name = db.Column(db.Integer, db.ForeignKey('organizations.name'))
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     course_format = db.Column(db.String, db.ForeignKey('formats.type'))
-    lessons = db.relationship("Lesson", backref='lessons')
+    lessons = db.relationship("Lesson", backref='course')
 
 
 class Organization(db.Model):
@@ -112,7 +112,7 @@ class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
-    videos = db.relationship('Video', backref='videos', lazy='dynamic')
+    videos = db.relationship('Video', backref='lesson', lazy='dynamic')
 
 
 class Video(db.Model):
