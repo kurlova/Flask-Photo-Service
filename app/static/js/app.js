@@ -246,40 +246,59 @@ myapp.prototype.run  = function(data) {
 
     }]);
 
+
     app.controller('LessonCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams){
         console.log('LessonCtrl works');
-        $scope.lesson_num = 1;
-        //console.log($scope.lesson);
-        //достать ид курса
+
+        $scope.lessonChange = function () {
+            //console.log($scope.lesson_num);
+            $scope.course_data = {};
+            $scope.course_data['course_id'] = $scope.course_id;
+            $scope.course_data['lesson_num'] = $scope.lesson_num;
+            $http({
+                method: "POST",
+                url: 'api/lessons',
+                headers: {'Content-Type': 'application/json' },
+                data: {"data": $scope.course_data}
+            }).then(
+                function (data) {
+                    console.log(data['data']['data']);
+                    $scope.lesson = data['data']['data'][0];
+                    console.log($scope.lesson);
+                    $scope.link = $scope.lesson['videos']['link'];
+                    console.log($scope.link);
+                    $scope.name = $scope.lesson.name;
+                    $scope.description = $scope.lesson.description;
+                },
+                function () {
+                    console.log('wrong')
+                }
+            );
+        };
+
         $scope.course_id=$routeParams.course_id;
-        console.log($scope.course_id);
-        $scope.course_data = {};
-        $scope.course_data['course_id'] = $scope.course_id;
-        $scope.course_data['lesson_num'] = $scope.lesson_num;
-        console.log($scope.course_data);
-        $http({
-            method: "POST",
-            url: 'api/lessons',
-            headers: {'Content-Type': 'application/json' },
-            data: {"data": $scope.course_data}
-        }).then(
-            function (data) {
-                console.log(data['data']['data']);
-                $scope.lesson = data['data']['data'][0];
-                console.log($scope.lesson);
-                //console.log($scope.lesson);
-                $scope.link = $scope.lesson['videos']['link'];
-                console.log($scope.link);
-                $scope.name = $scope.lesson.name;
-                $scope.description = $scope.lesson.description;
-                //присваиваем ид урока = 1
-                // при нажатии на кнопку "следующий" ид урока инкрементируется
-                // посылаем этот ид на сервер, берем данные урока
-            },
-            function () {
-                console.log('wrong')
+        $scope.first_lesson = true;
+        $scope.lesson_num = 1;
+        $scope.result = $scope.lessonChange();
+        console.log($scope.result);
+
+        $scope.goToNextLesson = function () {
+            $scope.lesson_num += 1;
+            $scope.result = $scope.lessonChange();
+            console.log($scope.result);
+            $scope.first_lesson = false;
+        };
+
+        $scope.goToPreviousLesson = function () {
+            $scope.lesson_num -= 1;
+            if ($scope.lesson_num <= 1) {
+                $scope.lesson_num = 1;
+                $scope.first_lesson = true
             }
-        );
+            $scope.result = $scope.lessonChange();
+            console.log($scope.result);
+        };
+
         $scope.getIframeSrc = function() {
             return $scope.link;
         };
