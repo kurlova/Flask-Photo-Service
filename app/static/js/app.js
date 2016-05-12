@@ -71,11 +71,7 @@ myapp.prototype.run  = function(data) {
     }
 
     app.controller('CoursesCtrl', ['$scope', '$http', '$location', function($scope, $http, $location){
-        console.log($scope);
-        console.log('$location.url() - ', $location.url());
-        console.log('$location.path() - ', $location.path());
-        console.log('$location.search() - ', $location.search());
-        console.log('$location.hash() - ', $location.hash());
+        console.log('CoursesCtrl (main) works');
 
         $http.get('/courses').success(function(data){
             $scope.courses=data;
@@ -136,12 +132,13 @@ myapp.prototype.run  = function(data) {
     app.controller('CourseCtrl',[
         '$scope','$http', '$location',
         function($scope, $http, $location) {
-
+            console.log('CourseCtrl works');
         }
     ]);
 
     app.controller('SearchCtrl', ['$scope', '$http', '$location', '$routeParams',
         function($scope, $http, $location, $routeParams){
+            console.log('SearchCtrl works');
             $scope.submitFunc = function (form) {
 
                 $scope.res = [];
@@ -166,6 +163,7 @@ myapp.prototype.run  = function(data) {
         }]);
 
     app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
+        console.log('ViewProfCtrl works');
         $scope.subscribe = function(){
             $scope.uid = $cookies.get('user_id');
             $http({
@@ -181,7 +179,7 @@ myapp.prototype.run  = function(data) {
 
     app.controller('CourseDetailCtrl', ['$scope', '$http', '$cookies', '$location', '$routeParams',
         function($scope, $http, $cookies, $location, $routeParams){
-            console.log($scope);
+            console.log('CourseDetailCtrl works');
 
             $scope.course_id=$routeParams.course_id;
             $scope.user_id = $cookies.get('user_id');
@@ -236,7 +234,7 @@ myapp.prototype.run  = function(data) {
             $scope.seeDetails = function(id){
                 console.log('works');
                 $location.path('/courses/' + id.toString() + '/lessons');
-                console.log($location.path)
+                $scope.lesson = 1;
             }
 
         }]);
@@ -249,13 +247,16 @@ myapp.prototype.run  = function(data) {
     }]);
 
     app.controller('LessonCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams){
-        $scope.link = '';
+        console.log('LessonCtrl works');
+        $scope.lesson_num = 1;
+        //console.log($scope.lesson);
         //достать ид курса
         $scope.course_id=$routeParams.course_id;
         console.log($scope.course_id);
         $scope.course_data = {};
-        $scope.course_data['id'] = $scope.course_id;
-        // сделать хттп гет на адрес который даст данные урока
+        $scope.course_data['course_id'] = $scope.course_id;
+        $scope.course_data['lesson_num'] = $scope.lesson_num;
+        console.log($scope.course_data);
         $http({
             method: "POST",
             url: 'api/lessons',
@@ -263,15 +264,17 @@ myapp.prototype.run  = function(data) {
             data: {"data": $scope.course_data}
         }).then(
             function (data) {
-                $scope.lesson = data['data']['data']['0'];
+                console.log(data['data']['data']);
+                $scope.lesson = data['data']['data'][0];
                 console.log($scope.lesson);
-                $scope.link = data['data']['data']['0']['videos']['link'];
+                //console.log($scope.lesson);
+                $scope.link = $scope.lesson['videos']['link'];
                 console.log($scope.link);
                 $scope.name = $scope.lesson.name;
                 $scope.description = $scope.lesson.description;
-                //$scope.lesson = data['data'];
-                //$scope.link = $scope.lesson['videos']['link'];
-                //console.log($scope.link)
+                //присваиваем ид урока = 1
+                // при нажатии на кнопку "следующий" ид урока инкрементируется
+                // посылаем этот ид на сервер, берем данные урока
             },
             function () {
                 console.log('wrong')

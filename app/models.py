@@ -110,6 +110,7 @@ class Lesson(db.Model):
     __tablename__ = 'lessons'
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
     videos = db.relationship('Video', backref='lesson', lazy='dynamic')

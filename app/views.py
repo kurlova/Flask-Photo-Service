@@ -4,7 +4,7 @@
 
 import flask
 from app import app, db
-from app.models import User, Course, users_courses_relationship, Camera
+from app.models import User, Course, users_courses_relationship, Camera, Lesson
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
@@ -173,21 +173,26 @@ def view_course_details():
 def return_lessons():
     course_data = request.get_json()
     print(course_data)
-    course_id = course_data['data']['id']
-    print(course_id)
-    course = Course.query.filter_by(id=course_id).first()
-    lessons = []
-    videos_obj = course.lessons[0].videos[0]
+    course_id = course_data['data']['course_id']
+    lesson_number = course_data['data']['lesson_num']
+    print(course_id, lesson_number)
+    lessons = Lesson.query.filter_by(course_id=course_id).all()
     videos = {}
-    videos['id'] = videos_obj.id
-    videos['name'] = videos_obj.name
-    videos['link'] = videos_obj.link
-    for el in range(len(course.lessons)):
-        lessons.append({"id": course.lessons[el].id,
-                        "name": course.lessons[el].name,
-                        "description": course.lessons[el].description,
-                        "videos": videos})
-    result = json.dumps({"data": lessons}, ensure_ascii=False)
+    lesson = []
+    for el in range(len(lessons)):
+        if lessons[el].number == lesson_number:
+            current_lesson = lessons[el]
+            print(current_lesson)
+            video = current_lesson.videos[0] # 0 потому что мы пока используем концепт 1 урок = 1 видео
+            videos['id'] = video.id
+            videos['name'] = video.name
+            videos['link'] = video.link
+            lesson.append({"id": current_lesson.id,
+                            "name": current_lesson.name,
+                            "description": current_lesson.description,
+                            "videos": videos})
+            break
+    result = json.dumps({"data": lesson}, ensure_ascii=False)
     print(result)
     return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
 
