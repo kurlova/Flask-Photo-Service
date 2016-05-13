@@ -1,38 +1,32 @@
-<head>
-   
-</head>
-
-<div  class="row col-lg-12" id='header'>
+<div class="container" id='aboutCourse'>
+<div class="row col-mg-12" id="header">
     <h1>Онлайн-школа по фотографии</h1>
 
-<div ng-controller="SearchCtrl">
-  <form class="form-search" action="#/search/q" method="GET" name="submitParam" ng-submit="submitFunc(submitParam)">
-    <input type="text"  class="input-medium search-query" placeholder="Искать по всем темам" value="query" name="q" ng-model="query">
+
+<div class="row col-md-12" id='search'>
+  <form class="form-search" name="param" ng-submit="searchCourse(param)">
+    <input type="text" class="input-medium search-query"
+           placeholder="Искать по всем темам" name="q" ng-model="query">
     <button type="submit" class="btn">Поиск</button>
   </form>   
 </div>
-    
 </div>
 
-<h2>Популярные курсы</h2>
-            
-    <div class="col-xs-12">
-        
-            <div class="col-xs-3 col-mg-4" id='courses' ng-repeat='course in courses.data'>
-                <p>LIKE</p>
-                <img ng-src="{[course.image]}" width="100" height="100"/>
-                <p><strong>{[course.name]}</strong></p>
-                <p><a class="btn btn-default" href="#/coursesS/{[course.id]}" role="button">View details &raquo;</a></p>
-                
-            </div>
+<div class="row" id="popular" ng-show="show_popular">
+    <h2>Популярные курсы</h2>
+        <div class="col-lg-4 col-md-4 col-xs-4" id='courses' ng-repeat='course in courses.data'>
+            <img ng-src="{[course.image]}" width="100" height="100"/>
+            <p><strong>{[course.name]}</strong></p>
+            <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
+        </div>
+</div>
+
+<div class="row col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2" id="searched" ng-hide="show_popular">
+    <h2>Результаты поиска</h2>
+    <div id="courses_search" ng-repeat="course in res.data" >
+        <img ng-src="{[course.image]}" width="100" height="100">
+        <p><strong>{[course.name]}</strong></p>
+        <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
     </div>
-
-http://localhost:5000/?q=sdfghj#/search
-http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/search?q=
-http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/
-http://localhost:5000/?q=%D1%84%D0%BE%D1%82%D0%BE#/
-http://localhost:5000/?q=фото#/
-
-http://localhost:5000/?q=aj#/search
-
-
+</div>
+</div>
