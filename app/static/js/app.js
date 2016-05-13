@@ -261,9 +261,9 @@ myapp.prototype.run  = function(data) {
                 headers: {'Content-Type': 'application/json' },
                 data: {"data": $scope.course_data}
             }).then(
-                function (data) {
-                    console.log(data['data']['data']);
-                    $scope.lesson = data['data']['data'][0];
+                function (response) {
+                    console.log(response.data['data']);
+                    $scope.lesson = response.data['data'][0];
                     console.log($scope.lesson);
                     $scope.link = $scope.lesson['videos']['link'];
                     console.log($scope.link);
@@ -302,6 +302,27 @@ myapp.prototype.run  = function(data) {
         $scope.getIframeSrc = function() {
             return $scope.link;
         };
+    }]);
+    
+    app.controller('PlanCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
+        console.log('PlanCtrl works');
+
+        $scope.course_id=$routeParams.course_id;
+        console.log($scope.course_id);
+        $scope.c_data = {};
+        $scope.c_data['id'] = $scope.course_id;
+        $http({
+            method: "POST",
+            url: 'api/plan',
+            headers: {'Content-Type': 'application/json' },
+            data: {"data": $scope.c_data}
+        }).then(
+            function(response){
+                console.log(response.data['data']);
+                console.log(response.data['data'].length);
+                $scope.plan = response.data
+            }
+        )
     }]);
 
     //app.controller('MyVideoPlayer', function($scope){

@@ -197,6 +197,28 @@ def return_lessons():
     return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
 
 
+@app.route('/api/plan', methods=['POST'])
+def return_plan():
+    course_data = request.get_json()
+    print(course_data)
+    id = course_data['data']['id']
+    course = Course.query.filter_by(id=id).first()
+    lessons_data = course.lessons
+    videos = []
+    lessons = []
+    for lsn in range(len(lessons_data)):
+        videos.append({"lesson_id": lessons_data[lsn].videos[0].lesson_id,
+                       "link": lessons_data[lsn].videos[0].link})
+        lessons.append({"id": lessons_data[lsn].id,
+                        "name": lessons_data[lsn].name,
+                        "description": lessons_data[lsn].description,
+                        "video": videos[lsn]
+                        })
+    print(lessons)
+    result = json.dumps({"data": lessons}, ensure_ascii=False)
+    print(result)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
+
 # Удаление курса
 @app.route('/delete_course', methods=['GET', 'POST'])
 def delete_course():
