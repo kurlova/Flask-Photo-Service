@@ -7,18 +7,19 @@
 #header{
     background-image: url(../icon/foto.jpg);
     background-size: 100%;
+    height: 200px;
+}
+#search{
+    margin-top: 60px;
 }
 
 .form-search{
     margin-left: 40%;
 }
-h2, h1{
+h3, h2, h1{
     text-align: center;
-    padding: 60px;
 }
-h3{
-    padding: 60px;
-}
+
 #content{
     background: gray;
     height: 60px;
@@ -39,14 +40,21 @@ h3{
 }
 #courses{
     border: 1px solid gray;
-    height: 350px;
-    padding: 5px;
+    height: 250px;
+    padding: 20px;
+    text-align: left;
+}
+#Programma{
+    padding: 80px;
+}
+#aboutCourse{
+    margin-top: 60px;
 }
 
 #courses_search{
     border: 1px solid gray;
-    height: 150px;
-    padding: 5px;
+    height: 200px;
+    padding: 15px;
 }
 #loggedUser{
     color: #00b3ee;
@@ -54,4 +62,26 @@ h3{
 
 #plan{
     padding-bottom: 20px;
+}
+
+#user_content{
+    margin-top: 100px;
+}
+
+#userCourses {
+    border: 1px solid lightgray;
+    margin: 10px;
+}
+
+#courseSubscrName {
+    text-align: left;
+}
+
+#ownedCourses {
+    border: 1px solid lightgray;
+    margin: 10px;
+}
+
+#courseOwnedName {
+    text-align: left;
 }

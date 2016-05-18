@@ -4,39 +4,44 @@
     <meta charset="utf-8">
 </head>
 <body>
-<div class='row'>
-    <div class="col-xs-12 col-sm-4">
-        <div id='phone-images'>
+<p></p><p></p>
+<div class="container" id='aboutCourse'>
+    
+    <div class='row'>
+        <div id='phone-images' class="col-md-4 col-xs-4 col-sm-4">
+            
             <img ng-src="{[course.image]}" width="100" height="100"/>
-        </div>
-        <p>Стоимость: {[course.cost]}
-        </p>
-        <p>Формат: {[course.format]}</p>
-        <a class="btn btn-default" id="subscr" ng-click="subscribe(course.id)" ng-hide="if_subscr" role="button">Записаться</a>
-        <div ng-show="if_subscr">
-            <p>Вы подписаны на этот курс.</p>
-            <a ng-click="seeDetails(course.id)">Перейти к материалам курса &raquo;</a>
-        </div>
-    </div>
-
-    <div id='aboutCourse' class="col-xs-12 col-sm-8">
-        <h1> {[course.name]}</h1>
-        <p>{[course.description]}</p>
-    </div>
-    <div class="col-xs-12" ng-controller="PlanCtrl">
-        <h1>Программа курса</h1>
-        <div ng-repeat="lesson in plan.data">
-            <div id="plan">
-                <div class="col-xs-3">
-                    {[lesson.name]}
-                </div>
-                <div class="col-xs-9">
-                    {[lesson.description]}
-                </div>
+            
+            <p>Стоимость: {[course.cost]}</p>
+            <p>Формат: {[course.format]}</p>
+            <a class="btn btn-default" id="subscr" ng-click="subscribe(course.id)" ng-hide="if_subscr" role="button">Записаться</a>
+            <div ng-show="if_subscr">
+                <p>Вы подписаны на этот курс.</p>
+                <a ng-click="seeDetails(course.id)">Перейти к материалам курса &raquo;</a>
             </div>
-            <hr>
         </div>
+
+        <div class="col-md-8 col-xs-8 col-sm-8">
+            <h1> {[course.name]}</h1>
+            <p>{[course.description]}</p>
         </div>
+    </div>
+    
+    <div class="row" id='Programma'>
+        <div class="col-md-12 col-xs-12" ng-controller="PlanCtrl">
+            <h1>Программа курса</h1>
+            <div ng-repeat="lesson in plan.data">
+                <div id="plan">
+                    <div class="col-xs-3">
+                        {[lesson.name]}
+                    </div>
+                    <div class="col-xs-9">
+                        {[lesson.description]}
+                    </div>
+                </div>
+                <hr>
+            </div>
+            </div>
     </div>
 </div>
 </body>

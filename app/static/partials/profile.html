@@ -4,28 +4,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Профиль пользователя</title>
-    <link rel=stylesheet href="style.css">
-    <link rel=stylesheet href="bootstrap/css/bootstrap.css">
 </head>
 <body>
-    <div class="container">
-        <div class="row" id="headerpro">
-            <div class="span4">
-                <h3>Главная</h3>
-                <h1>{[user_id]}</h1>
-            </div>
-            <div class="span4">
-                <form class="form-search">
-                    <input type="text" class="input-medium search-query">
-                    <button type="submit" class="btn">Поиск</button>
-                </form>
-            </div>
-            
-            <div class="span4">nn
-            </div>
-        </div>  
+<div class="container" id="user_content">
+    <div class="row">
+        <h2>Здравствуйте, {[name]}!</h2>
+        <div id="userInformation">
+            <p>Ваш email: {[email]}</p>
+            <p>Страна: {[country]}</p>
+            <p>Город: {[city]}</p>
+        </div>
     </div>
-<script src="bootstrap/js/bootstrap.js"></script>
+    <div class="row">
+        <div id="subscribedOn" class="col-xs-12">
+            <p>Курсы на которые подписан</p>
+            <div>
+                <div class="col-xs-5" ng-repeat="course in subscriptions" id="userCourses">
+                    <div class="col-xs-4" id="courseSubscrImg" align="left"><img src="{[course.img]}" width="130" height="100"></div>
+                    <div class="col-xs-6" id="courseSubscrName"><a href="#/api/course_details/{[course.id]}">{[course.name]}</a></div>
+                </div>
+            </div>
+        </div>
+        <div id="owned" class="col-xs-12">
+            <p><a ng-click="showCreated()">Курсы которые создал</a></p>
+            <div>
+                <div class="col-xs-5" ng-repeat="course in owned" id="ownedCourses">
+                    <div class="col-xs-4" id="courseOwnedImg" align="left"><img src="{[course.img]}" width="130" height="100"></div>
+                    <div class="col-xs-6" id="courseOwnedName"><a href="#/api/course_details/{[course.id]}">{[course.name]}</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -28,6 +28,10 @@ myapp.prototype.run  = function(data) {
                     templateUrl:'partials/contact.html',
                     controller:'ContactCtrl'
                 })
+                .when('/profile', {
+                    templateUrl:'partials/profile.html',
+                    controller:'ViewProfCtrl'
+                })
                 //.when('/search/:q',{
                 //    templateUrl:'partials/search.html',
                 //    controller:'SearchCtrl'
@@ -162,20 +166,47 @@ myapp.prototype.run  = function(data) {
 
         }]);
 
-    app.controller('ViewProfCtrl', '$scope', '$http', '$cookies', function($scope, $http, $cookies){
+    app.controller('ViewProfCtrl', ['$scope', '$http', '$cookies', function($scope, $http, $cookies){
         console.log('ViewProfCtrl works');
-        $scope.subscribe = function(){
-            $scope.uid = $cookies.get('user_id');
+
+        $scope.uid = $cookies.get('user_id');
+        console.log($scope.uid);
+        $scope.u_data = {};
+        $scope.u_data.uid = $scope.uid;
+        $http({
+            method: "POST",
+            url: '/api/view_profile',
+            headers: {'Content-Type': 'application/json' },
+            data: {"data": $scope.u_data}
+        }).then(
+            function(response){
+                $scope.user_data = response.data.data;
+                $scope.name = $scope.user_data.username;
+                $scope.email = $scope.user_data.email;
+                $scope.city = $scope.user_data.city;
+                $scope.country = $scope.user_data.country;
+                $scope.subscriptions = $scope.user_data.subscriptions;
+            }
+        );
+
+        $scope.showCreated = function () {
+            console.log('shc w');
+            console.log($scope.u_data);
             $http({
                 method: "POST",
-                url: '/api/view_profile',
+                url: '/api/created',
                 headers: {'Content-Type': 'application/json' },
-                data: {"data": $scope.uid}
-            }).success(function(data){
-                console.log(data);
-            });
+                data: {"data": $scope.u_data}
+            }).then(
+                function (response) {
+                    $scope.data = response.data.data;
+                    console.log($scope.data);
+                    $scope.owned = $scope.data;
+                }
+            )
         }
-    });
+
+    }]);
 
     app.controller('CourseDetailCtrl', ['$scope', '$http', '$cookies', '$location', '$routeParams',
         function($scope, $http, $cookies, $location, $routeParams){
@@ -183,6 +214,10 @@ myapp.prototype.run  = function(data) {
 
             $scope.course_id=$routeParams.course_id;
             $scope.user_id = $cookies.get('user_id');
+            if ($scope.user_id == undefined){
+                $scope.user_id = 'undefined'
+            }
+            console.log($scope.user_id);
             $scope.cu_data = {};
             $scope.cu_data['user_id'] = $scope.user_id.toString();
             $scope.cu_data['course_id'] = $scope.course_id.toString();
@@ -192,43 +227,50 @@ myapp.prototype.run  = function(data) {
                 url: 'api/course_details',
                 headers: {'Content-Type': 'application/json' },
                 data: {"data": $scope.cu_data}
-            }).success(function(data){
-                console.log(data);
-                $scope.course = data["data"];
-                if($scope.course["cost"] == null) {
-                    $scope.course["cost"] = 'Free'
-                }
-                else {
-                    $scope.course["cost"] = $scope.course["cost"] + ' p.'
-                }
-                if($scope.course["subscribed"]=='true'){
-                    $scope.if_subscr = true;
-                }
-                else {
-                    $scope.if_subscr = false;
-                }
-            });
+            }).then(
+                function(data){
+                    $scope.course = data.data.data;
+                    console.log($scope.course);
+                    if($scope.course["cost"] == null) {
+                        $scope.course["cost"] = 'Free'
+                    }
+                    else {
+                        $scope.course["cost"] = $scope.course["cost"] + ' p.'
+                    }
+                    if($scope.course["subscribed"]=='true'){
+                        $scope.if_subscr = true;
+                    }
+                    else {
+                        $scope.if_subscr = false;
+                    }
+                });
 
             $scope.subscribe = function(id) {
-                $scope.cid = id;
-                console.log($scope.cid);
                 $scope.uid = $cookies.get('user_id');
-                console.log($scope.uid);
-                $scope.uc_json = {};
-                $scope.uc_json.user_id = parseInt($scope.uid);
-                $scope.uc_json.course_id = parseInt($scope.cid);
-                console.log($scope.uc_json);
-                $http({
-                    method: "POST",
-                    url: '/subscribe',
-                    headers: {'Content-Type': 'application/json' },
-                    data: {"data": $scope.uc_json}
-                }).then(
-                    function(data){
-                        console.log(data);
-                        $scope.if_subscr = true;
-                        console.log($scope.if_subscr);
-                    });
+                if ($scope.uid != undefined){
+                    console.log($scope.uid);
+                    $scope.cid = id;
+                    console.log($scope.cid);
+                    $scope.uc_json = {};
+                    $scope.uc_json.user_id = parseInt($scope.uid);
+                    $scope.uc_json.course_id = parseInt($scope.cid);
+                    console.log($scope.uc_json);
+                    $http({
+                        method: "POST",
+                        url: '/subscribe',
+                        headers: {'Content-Type': 'application/json' },
+                        data: {"data": $scope.uc_json}
+                    }).then(
+                        function(data){
+                            console.log(data);
+                            $scope.if_subscr = true;
+                            console.log($scope.if_subscr);
+                        });
+                }
+                else {
+                    alert( "Please, log in into your account." );
+                }
+
             };
 
             $scope.seeDetails = function(id){
@@ -303,7 +345,7 @@ myapp.prototype.run  = function(data) {
             return $scope.link;
         };
     }]);
-    
+
     app.controller('PlanCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
         console.log('PlanCtrl works');
 

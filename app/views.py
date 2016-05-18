@@ -74,19 +74,22 @@ def create_course():
 
 
 # Список курсов которые пользователь создал
-@app.route('/created', methods=['POST', 'GET'])
+@app.route('/api/created', methods=['POST'])
 def created_courses():
     user = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
     convert = json.loads(user)
-    user_id = convert["data"]["user_id"]
+    user_id = convert["data"]["uid"]
     courses = User.query.filter_by(id=user_id).first().courses_owned.all()
     owned = []
     for el in range(len(courses)):
         owned.append({"name": courses[el].name,
+                      "id": courses[el].id,
                       "description": courses[el].description,
-                      "image": courses[el].img})
+                      "img": courses[el].img})
     result = json.dumps({"data": owned}, ensure_ascii=False)
-    return flask.Response(response=result, content_type='application/json; charset=utf-8')
+    return flask.Response(response=result,
+                          content_type='application/json; charset=utf-8',
+                          mimetype='application/json')
 
 
 # Подписка на курс
@@ -108,18 +111,20 @@ def subscribe_course():
 def view_profile():
     user_init = request.get_json()
     print(user_init)
-    user_id = user_init["data"]["user_id"]
+    user_id = user_init["data"]["uid"]
     user = User.query.filter_by(id=user_id).first()
     courses = User.query.filter_by(id=user_id).first().courses_subscr
     user_data = {}
     user_data['username'] = user.nickname
     user_data['country'] = user.country
     user_data['city'] = user.city
+    user_data['email'] = user.email
     # user_data['cameras'] = user.cameras.first()
     print(user.cameras)
     subscriptions = []
     for el in range(len(courses)):
         subscriptions.append({"name": courses[el].name,
+                              "id": courses[el].id,
                               "description": courses[el].description,
                               "img": courses[el].img})
     user_data['subscriptions'] = subscriptions
@@ -159,11 +164,12 @@ def view_course_details():
     course_json['cost'] = course.cost
     course_json['format'] = course.course_format
     course_json['subscribed'] = 'false'
-    user_courses = User.query.filter_by(id=uid).first().courses_subscr
-    for i in range(len(user_courses)):
-        print(user_courses[i].id)
-        if user_courses[i].id == int(cid):
-            course_json['subscribed'] = 'true'
+    if uid != 'undefined':
+        user_courses = User.query.filter_by(id=uid).first().courses_subscr
+        for i in range(len(user_courses)):
+            print(user_courses[i].id)
+            if user_courses[i].id == int(cid):
+                course_json['subscribed'] = 'true'
     result = json.dumps({"data": course_json}, ensure_ascii=False)
     print(result)
     return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
