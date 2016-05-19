@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import datetime
 
 import flask
 from app import app, db
-from app.models import User, Course, users_courses_relationship, Camera, Lesson
+from app.models import User, Course, users_courses_relationship, Camera, Lesson, Comment
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
@@ -183,6 +183,7 @@ def return_lessons():
     lesson_number = course_data['data']['lesson_num']
     print(course_id, lesson_number)
     lessons = Lesson.query.filter_by(course_id=course_id).all()
+    print('this is a lesson' + str(len(lessons)))
     videos = {}
     lesson = []
     for el in range(len(lessons)):
@@ -196,7 +197,8 @@ def return_lessons():
             lesson.append({"id": current_lesson.id,
                             "name": current_lesson.name,
                             "description": current_lesson.description,
-                            "videos": videos})
+                            "videos": videos,
+                            "lessons_amount": len(lessons)})
             break
     result = json.dumps({"data": lesson}, ensure_ascii=False)
     print(result)
@@ -280,6 +282,39 @@ def logout():
     response.set_cookie('user_id', '', expires=0)
     response.set_cookie('redirect', '', expires=0)
     return response
+
+
+@app.route('/api/create_comment', methods=['POST'])
+def create_comment():
+    comment_data = request.get_json()
+    user_id = comment_data['data']['user_id']
+    vid_id = comment_data['data']['vid_id']
+    com_text = comment_data['data']['text']
+    timestamp = datetime.datetime.now()
+    comment = Comment(author=user_id, text=com_text, timestamp=timestamp, vid_id=vid_id)
+    db.session.add(comment)
+    db.session.commit()
+    return jsonify({'status':'ok'}), 200
+
+
+@app.route('/api/show_comments', methods=["POST"])
+def show_comments():
+    lesson_data = request.get_json()
+    lesson_id = lesson_data['data']['video_id'] # да видео потому что пока урок=1видео
+    lesson = Lesson.query.filter_by(id=lesson_id).first()
+    video = lesson.videos[0] # пока 0
+    comments_data = video.comments.all()
+    comments = []
+    for comment in range(len(comments_data)):
+        print(comments_data[comment].user.nickname)
+        comments.append({"id": comments_data[comment].id,
+                         "video_id": comments_data[comment].vid_id,
+                         "author_id": comments_data[comment].author,
+                         "author_name": comments_data[comment].user.nickname,
+                         "text": comments_data[comment].text,
+                         "timestamp": comments_data[comment].timestamp})
+    result = json.dumps({"data": comments}, ensure_ascii=False)
+    return flask.Response(response=result, content_type='application/json; charset=utf-8', mimetype='application/json')
 
 
 #When the user clicks the "Login in with ..." link to initiate an OAuth authentication

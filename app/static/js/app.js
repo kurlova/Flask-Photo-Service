@@ -289,7 +289,7 @@ myapp.prototype.run  = function(data) {
     }]);
 
 
-    app.controller('LessonCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams){
+    app.controller('LessonCtrl', ['$scope', '$http', '$cookies', '$routeParams', function($scope, $http, $cookies, $routeParams){
         console.log('LessonCtrl works');
 
         $scope.lessonChange = function () {
@@ -311,6 +311,7 @@ myapp.prototype.run  = function(data) {
                     console.log($scope.link);
                     $scope.name = $scope.lesson.name;
                     $scope.description = $scope.lesson.description;
+                    $scope.lessons_amount = $scope.lesson.lessons_amount
                 },
                 function () {
                     console.log('wrong')
@@ -320,15 +321,25 @@ myapp.prototype.run  = function(data) {
 
         $scope.course_id=$routeParams.course_id;
         $scope.first_lesson = true;
+        $scope.last_lesson = false;
         $scope.lesson_num = 1;
         $scope.result = $scope.lessonChange();
         console.log($scope.result);
+
+        $scope.user_id = $cookies.get('user_id');
+        if ($scope.user_id == undefined){
+            $scope.user_id = 'undefined'
+        }
 
         $scope.goToNextLesson = function () {
             $scope.lesson_num += 1;
             $scope.result = $scope.lessonChange();
             console.log($scope.result);
             $scope.first_lesson = false;
+            console.log($scope.lessons_amount, $scope.lesson_num);
+            if ($scope.lessons_amount == $scope.lesson_num) {
+                console.log('equal'); $scope.last_lesson=true
+            }
         };
 
         $scope.goToPreviousLesson = function () {
@@ -339,7 +350,46 @@ myapp.prototype.run  = function(data) {
             }
             $scope.result = $scope.lessonChange();
             console.log($scope.result);
+            console.log('equal'); $scope.last_lesson=false
         };
+
+        $scope.comment_data = {};
+
+        $scope.sendComment = function () {
+            console.log($scope.user_id);
+            $scope.comment_data.user_id = $scope.user_id;
+            $scope.comment_data.vid_id = $scope.lesson_num; //да костыль лессон ид потому что пока 1 урок = 1 видео
+            console.log($scope.comment_data);
+            $http({
+                method: "POST",
+                url: 'api/create_comment',
+                headers: {'Content-Type': 'application/json'},
+                data: {"data": $scope.comment_data}
+            }).then(
+                function () {
+                    console.log('success!')
+                }
+            )
+        };
+
+
+        $scope.all_comments = {};
+        $scope.all_comments.video_id = $scope.lesson_num; //да костыль лессон ид потому что пока 1 урок = 1 видео
+        console.log($scope.all_comments);
+        $http({
+            method: "POST",
+            url: 'api/show_comments',
+            headers: {'Content-Type': 'application/json'},
+            data: {"data": $scope.all_comments}
+        }).then(
+            function (response) {
+                $scope.show_comments = response.data.data;
+                console.log($scope.show_comments)
+            },
+            function () {
+                console.log('wrong!')
+            }
+        );
 
         $scope.getIframeSrc = function() {
             return $scope.link;

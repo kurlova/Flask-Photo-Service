@@ -85,3 +85,20 @@ h3, h2, h1{
 #courseOwnedName {
     text-align: left;
 }
+
+#allComments {
+    margin: 20px;
+}
+
+#commentTextInput {
+    margin: 10px;
+}
+
+#sendCommentForm {
+    margin: 30px;
+}
+
+#lessonName {
+    margin: 30px;
+    margin-bottom: 50px;
+}

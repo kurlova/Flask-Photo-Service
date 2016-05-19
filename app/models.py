@@ -1,3 +1,4 @@
+import datetime
 from flask import json
 from flask.ext.login import UserMixin
 from app import db, lm
@@ -47,6 +48,7 @@ class User(UserMixin, db.Model):
     courses_subscr = db.relationship('Course', secondary=users_courses_relationship,
                                      backref='subscribers')
     cameras = db.relationship('Camera', secondary=users_cameras_relationship, backref='cameras')
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
 
     def __repr__(self):
@@ -55,7 +57,7 @@ class User(UserMixin, db.Model):
     def to_json(self):
         return json.loads(json.dumps({"id": self.id,
                                       "nickname": self.nickname,
-                                      "email" : self.email,
+                                      "email" : self.email if self.email else "",
                                       "city" : self.city if self.city else ""}, ensure_ascii=False))
 
 @lm.user_loader
@@ -122,3 +124,12 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     link = db.Column(db.String)
+    comments = db.relationship('Comment', backref='video', lazy='dynamic')
+
+
+class Comment(db.Model):
+    vid_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.Integer, db.ForeignKey('users.id'))
+    text = db.Column(db.Text(1000))
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.now())
