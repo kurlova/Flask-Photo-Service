@@ -1,32 +1,43 @@
-<div class="container" id='aboutCourse'>
-<div class="row col-mg-12" id="header">
-    <h1>Онлайн-школа по фотографии</h1>
 
-
-<div class="row col-md-12" id='search'>
-  <form class="form-search" name="param" ng-submit="searchCourse(param)">
-    <input type="text" class="input-medium search-query"
-           placeholder="Искать по всем темам" name="q" ng-model="query">
-    <button type="submit" class="btn">Поиск</button>
-  </form>   
+<div class="container-fluid"  id="header">
+    <div class="banner-container">
+         <h1 id="inner"><font color="white">Онлайн-портал по фотокурсам</font></h1>
+        <h3><font color="white">Портал, на котром собраны курсы от ведущих фотографов и фотошкол</font></h3> 
+    </div>
+    <div id='search'>
+        <form class="form-inline" name="param" ng-submit="searchCourse(param)">
+              <input type="text" class="form-control input-medium search-query"
+                   placeholder="Искать по всем темам" name="q" ng-model="query">
+              <button type="submit" class="btn btn-success">Поиск</button>
+          </form>
+    </div>
+    
 </div>
-</div>
 
-<div class="row" id="popular" ng-show="show_popular">
-    <h2>Популярные курсы</h2>
-        <div class="col-lg-4 col-md-4 col-xs-4" id='courses' ng-repeat='course in courses.data'>
-            <img ng-src="{[course.image]}" width="100" height="100"/>
+<div class="container">
+    <div class="jumbotron">
+    <div class="row" id="popular" ng-show="show_popular">
+        <h2 id="inner">Популярные курсы</h2>
+            <div class="col-md-3 col-md-offset-3 box" id='courses' ng-repeat='course in courses.data'>
+                <img ng-src="{[course.image]}" width="200" height="200"/>
+                <p><strong>{[course.name]}</strong></p>
+                <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">Подробнее &raquo;</a></p>
+            </div>
+            
+    </div>
+
+    <div class="row" id="searched" ng-hide="show_popular">
+        <h2>Результаты поиска</h2>
+        <div class="col-md-6 col-md-offset-3 box" id="courses_search" ng-repeat="course in res.data" >
+            <img ng-src="{[course.image]}" width="100" height="100">
             <p><strong>{[course.name]}</strong></p>
-            <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button" id='btn_details'>Подробнее &raquo;</a></p>
         </div>
-</div>
-
-<div class="row col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2" id="searched" ng-hide="show_popular">
-    <h2>Результаты поиска</h2>
-    <div id="courses_search" ng-repeat="course in res.data" >
-        <img ng-src="{[course.image]}" width="100" height="100">
-        <p><strong>{[course.name]}</strong></p>
-        <p><a class="btn btn-default" href="#/api/course_details/{[course.id]}" role="button">View details &raquo;</a></p>
+    </div>
+    
+    <div class="row" id="company" ng-show="show_popular">
+        <h2 id="inner">Ведущие фотографы</h2>
+        <h2 id="inner">Ведущие фотошколы</h2>
     </div>
 </div>
 </div>

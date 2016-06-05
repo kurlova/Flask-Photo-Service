@@ -3,8 +3,11 @@
 <head>
     
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ZZOOM - онлайн курсы по фотографии от ведущих специалистов</title>
+    <!-- Custom styles for this template -->
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+     <!-- Bootstrap core CSS -->
     <link rel=stylesheet href="{{url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.css')}}">
 </head>
       
@@ -12,7 +15,7 @@
     <nav class="navbar navbar-fixed-top navbar-inverse">
           <div class="container">
             <div class="navbar-header">
-                <a href="#/" class="navbar-brand">ЛОГОТИП</a>
+                <a href="http://localhost:5000/#/" class="navbar-brand">ZOOM</a>
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -36,7 +39,7 @@
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="#/about">About</a></li>
                 <li><a href="#/contact">Contact</a></li>
-                <li><a href="#/users/{[user.id]}">Профиль</a></li>
+                <li><a href="#/profile">Профиль</a></li>
               </ul>
                 
           </div><!-- /.nav-collapse -->
@@ -45,7 +48,7 @@
         </nav><!-- /.navbar -->
     
     
-    <div class="container"> 
+    <div class="container-fluid"> 
     
         <ng-view></ng-view> 
         <hr>
@@ -62,7 +65,7 @@
     <script src="{{url_for('static', filename='bower_components/angular/angular-cookies.js')}}"></script>
     <script src="{{url_for('static', filename='bower_components/angular/angular-media-player.min.js')}}"></script>
   
-    <script src="{{url_for('static', filename='js/services.js')}}"></script>
+    <!--<script src="{{url_for('static', filename='js/services.js')}}"></script>-->
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
     <script>
         window.application.run({user : {% if current_user.is_authenticated %} {{current_user.to_json()|safe }} {%else%} false {% endif %}})
