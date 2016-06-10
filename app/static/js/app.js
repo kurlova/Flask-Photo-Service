@@ -52,6 +52,10 @@ myapp.prototype.run  = function(data) {
                     templateUrl: 'partials/profile.html',
                     controller: 'ProfileCtrl'
                 })
+                .when('/create_course',{
+                    templateUrl: 'partials/create_course.html',
+                    controller: 'CoursesCtrl'
+                })
                 .otherwise({
                     redirectTo:'/'
                 });
@@ -74,7 +78,7 @@ myapp.prototype.run  = function(data) {
         }]);
     }
 
-    app.controller('CoursesCtrl', ['$scope', '$http', '$location', function($scope, $http, $location){
+    app.controller('CoursesCtrl', ['$scope', '$http', '$cookies', function($scope, $http, $cookies){
         console.log('CoursesCtrl (main) works');
 
         $http.get('/courses').success(function(data){
@@ -103,6 +107,72 @@ myapp.prototype.run  = function(data) {
                     console.log("Err " + response.status + " " + response.statusText);
                 }
             )
+        };
+
+        $scope.lesson_chosen = false;
+        $scope.conf_chosen = false;
+
+        $scope.createLessonType = function () {
+            $scope.lesson_chosen=true;
+            $scope.conf_chosen = false;
+        };
+
+        $scope.createConfType = function () {
+            $scope.conf_chosen = true;
+            $scope.lesson_chosen = false;
+        };
+
+        $scope.mainDiv = document.getElementById('lessons');
+        $scope.lesson_num = 1;
+        $scope.lesson_example = document.getElementById('lessonData1');
+
+        $scope.new_course_data = {};
+        $scope.new_course_data.lessons = [];
+
+        $scope.createOneMoreLesson = function () {
+            $scope.l_name_prev = document.getElementById('lesson_name' + $scope.lesson_num).value;
+            $scope.l_descr_prev = document.getElementById('les_description' + $scope.lesson_num).value;
+            $scope.l_video_prev = document.getElementById('video' + $scope.lesson_num).value;
+            console.log($scope.l_name_prev.value);
+            $scope.lesson_num +=1;
+            $scope.one_more_lesson = document.createElement('div');
+            $scope.one_more_lesson.innerHTML ='<div class="form-group"><label>Lesson ' + $scope.lesson_num + '</label></div>' +
+                '<div class="form-group"><label for="lesson_name' + $scope.lesson_num.toString() + '">Lesson name</label><input class="form-control" id="lesson_name' + $scope.lesson_num.toString() + '" ng-model="new_course_data.lessons.les_name"></div>' +
+                '<div class="form-group"><label for="les_description' + $scope.lesson_num.toString() + '">Lesson description:</label><textarea class="form-control" id="les_description' + $scope.lesson_num.toString() + '" ng-model="new_course_data.lessons.les_description"></textarea></div>' +
+                '<div class="form-group"><label for="video' + $scope.lesson_num.toString() + '">YouTube link:</label><input class="form-control" id="video' + $scope.lesson_num.toString() + '" ng-model="new_course_data.lessons.videos.link"></div>' +
+                '<div id="gap"></div>';
+
+
+            $scope.one_more_lesson.id = 'lessonData' + $scope.lesson_num;
+            $scope.mainDiv.appendChild($scope.one_more_lesson);
+            $scope.new_course_data.lessons.push({'name': $scope.l_name_prev, 'description': $scope.l_descr_prev, 'link': $scope.l_video_prev});
+            console.log($scope.new_course_data)
+        };
+
+        $scope.changeCostVal = function () {
+            $scope.input = document.getElementById('cost');
+            $scope.free_checker = document.getElementById('free');
+            if ($scope.free_checker.checked) {
+                $scope.input.disabled = true;
+                $scope.input.value = ''
+            }
+            else {
+                $scope.input.disabled = false;
+                $scope.input.value = ''
+            }
+        };
+
+        $scope.user_id = $cookies.get('user_id');
+
+        $scope.createCourse = function () {
+            console.log($scope.user_id);
+            if ($scope.user_id == undefined){
+                alert('Please log in into your account!')
+            }
+            else {
+                console.log('create course');
+                console.log($scope.new_course_data);
+            }
         }
     }]);
 
@@ -415,6 +485,25 @@ myapp.prototype.run  = function(data) {
                 $scope.plan = response.data
             }
         )
+    }]);
+
+    app.controller('VideoCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies){
+        console.log('VideoCtrl works');
+        $scope.user_id = $cookies.get('user_id');
+        if ($scope.user_id == undefined){
+            $scope.user_id = 'undefined'
+        }
+
+
+        $scope.createCourse = function () {
+            console.log($scope.user_id);
+            if ($scope.user_id == undefined){
+                alert('Please log in into your account!')
+            }
+            else {
+
+            }
+        }
     }]);
 
     //app.controller('MyVideoPlayer', function($scope){

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div class="row" id="newCoursePage">
+    <div id="newCourseData">Пожалуйста, заполните данные курса:</div>
+    <div class="col-md-8 col-lg-6" id="newCourse">
+        <form id="newCourseForm">
+            <div class="form-group">
+                <label for="c_name">Название курса:</label>
+                <input class="form-control" id="c_name" ng-model="new_course_data.c_name">
+            </div>
+            <div class="form-group">
+                <label for="c_description">Описание курса:</label>
+                <textarea class="form-control" id="c_description" ng-model="new_course_data.c_description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="c_logo">Логотип курса:</label>
+                <input class="form-control" id="c_logo" ng-model="new_course_data.c_image" value="icon/course.png">
+            </div>
+            <div class="form-group">
+                <label for="cost">Стоимость участия:</label>
+                <input class="form-control" id="cost" ng-model="new_course_data.cost">
+                <label for="free">Бесплатно</label>
+                <input type="checkbox" id="free" value=""
+                       ng-click="changeCostVal()"
+                       ng-model="new_course_data.cost">
+            </div>
+            <div class="form-group">
+                <label for="format">Формат курса:</label>
+                <select id="format" ng-model="new_course_data.c_format">
+                    <option value="Уроки" ng-click="createLessonType()">Уроки</option>
+                    <option value="Видеоконференция" ng-click="createConfType()" disabled>Видеоконференция (временно не доступна)</option>
+                </select>
+            </div>
+
+            <p></p>
+            <div id="createLessons" ng-show="lesson_chosen">
+                <div id="lessons">
+                    <div id="lessonData1">
+                        <div class="form-group">
+                            <label>Урок 1</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson_name1">Название урока:</label>
+                            <input class="form-control" id="lesson_name1">
+                        </div>
+                        <div class="form-group">
+                            <label for="les_description1">Описание урока:</label>
+                            <textarea class="form-control" id="les_description1"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="video1">Ссылка на ролик YouTube:</label>
+                            <input class="form-control" id="video1">
+                        </div>
+                        <div id="gap"></div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" ng-click="createOneMoreLesson()">+</button>
+                <div id="confData" ng-show="conf_chosen">
+                    Выбрана конференция!
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" ng-click='createCourse()' class="btn btn-success">Создать</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

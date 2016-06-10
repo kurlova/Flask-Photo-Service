@@ -4,7 +4,7 @@ import datetime
 
 import flask
 from app import app, db
-from app.models import User, Course, users_courses_relationship, Camera, Lesson, Comment
+from app.models import User, Course, users_courses_relationship, Camera, Lesson, Comment, Video
 from app.oauth import OAuthSignIn
 from flask import render_template, redirect, url_for, flash, request
 from flask import json
@@ -59,18 +59,33 @@ def search():
 
 
 # Создание курса
-@app.route('/create_course', methods=['GET', 'POST'])
+@app.route('/api/create_course', methods=['POST'])
 def create_course():
-    new_course = json.dumps({"data": request.json.get("data")}, ensure_ascii=False)
-    convert = json.loads(new_course)
-    name = convert["data"]["name"]
-    description = convert["data"]["description"]
-    img = convert["data"]["image"]
-    creator_id = convert["data"]["creator_id"]
-    course = Course(name=name, description=description, img=img, creator_id=creator_id)
+    course_data = request.get_json()
+    c_name = course_data["data"]["c_name"]
+    c_description = course_data["data"]["c_description"]
+    c_img = course_data["data"]["c_image"]
+    creator_id = course_data["data"]["creator_id"]
+    cost = course_data["data"]["cost"]
+    course_format = course_data["data"]["course_format"]
+    course = Course(name=c_name, description=c_description, img=c_img, creator_id=creator_id, cost=cost, course_format=course_format)
     db.session.add(course)
     db.session.commit()
-    return flask.Response(response='ok', content_type='application/json; charset=utf-8')
+    lessons = course_data["data"]["lessons"]
+    for les in range(len(lessons)):
+        les_name = lessons[les]["les_name"]
+        les_description = lessons[les]["les_description"]
+        les_number = lessons[les]["les_number"]
+        lesson = Lesson(course_id=course.id, name=les_name, description=les_description, number=les_number)
+        db.session.add(lesson)
+        db.session.commit()
+        for vid in range(len(lessons[les]["videos"])):
+            video_name = lessons[les]["videos"][vid]["vid_name"]
+            video_link = lessons[les]["videos"][vid]["link"]
+            video = Video(lesson_id=lesson.id, name=video_name, link=video_link)
+            db.session.add(video)
+            db.session.commit()
+    return jsonify({'status':'ok'}), 200
 
 
 # Список курсов которые пользователь создал
