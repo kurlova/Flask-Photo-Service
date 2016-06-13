@@ -13,21 +13,20 @@
             </div>
         </div>
 
-        <div class="col-md-4 col-xs-4 col-sm-4" ng-cloak>
+        <div class="col-md-4 col-xs-4 col-sm-4" >
             <div id="nextButton">
                 <a ng-click="goToNextLesson()" ng-hide="last_lesson">Перейти к следующему уроку &raquo;</a>
                 <p><a ng-click="goToPreviousLesson()" ng-hide="first_lesson">&laquo; Перейти к предыдущему уроку</a></p>
             </div>
-            <label class="checkbox inline">
-              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
-            </label>
+            <div layout="row">
+            <div flex="50" ng-repeat="lesson in plan.data">
+              <md-checkbox ng-checked="exists(lesson, selected)" ng-click="toggle(lesson, selected)">
+                {{ lesson.name }} 
+              </md-checkbox>
+            </div>
+            </div>
         </div>
+         
     </div>
     
     <div class='row'>
