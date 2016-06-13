@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('glavApp', ['ngRoute', 'ngCookies', 'mediaPlayer']);
+var app = angular.module('glavApp', ['ngRoute', 'ngCookies']);
 
 var myapp = function() {};
 
