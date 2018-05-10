@@ -11,20 +11,20 @@ SECRET_KEY = 'you-will-never-guess'
 
 OAUTH_CREDENTIALS = {
     'facebook': {
-        'id': '1522300574742943',
-        'secret': '5633207a0f69164ec817bf8c80ff794d'
+        'id': '',
+        'secret': ''
     },
     'vkontakte': {
-        'id': '5356466',
-        'secret': 'HItjnrMuiFJaRAhzbbIJ'
+        'id': '',
+        'secret': ''
     },
     'google': {
-            'id': '486274894648-aapkse42usip95n5c3uvp9enockq1fh2.apps.googleusercontent.com',
-            'secret': '5bQ4cWS-36QT5fCEFe-1hPt8'
+            'id': '',
+            'secret': ''
     },
     'twitter': {
-        'id': '6a5SurCSNVyT2XdbE8I9MaAmm',
-        'secret': 'a4sSfbsoICYsdgpv1bpr4iE1Gj45RoVG7wDfWZGemD1PABc9KF'
+        'id': '',
+        'secret': ''
     },
 }
 SESSION_TYPE = 'filesystem'
